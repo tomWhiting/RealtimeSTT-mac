@@ -834,10 +834,44 @@ class AudioToTextRecorder:
             if wake_words and self.wakeword_backend in {'pvp', 'pvporcupine'}:
 
                 try:
-                    self.porcupine = pvporcupine.create(
-                        keywords=self.wake_words_list,
-                        sensitivities=self.wake_words_sensitivities
-                    )
+                    import os
+                    access_key = os.getenv('PORCUPINE_ACCESS_KEY')
+                    if not access_key:
+                        raise ValueError("PORCUPINE_ACCESS_KEY environment variable is required for Porcupine 3.0+")
+                    
+                    # Check if wake words are file paths to custom models
+                    custom_model_paths = []
+                    builtin_keywords = []
+                    
+                    for wake_word in self.wake_words_list:
+                        if wake_word.endswith('.ppn') and os.path.exists(wake_word):
+                            custom_model_paths.append(wake_word)
+                        else:
+                            builtin_keywords.append(wake_word)
+                    
+                    # Create Porcupine instance with appropriate parameters
+                    if custom_model_paths and not builtin_keywords:
+                        # Only custom models
+                        self.porcupine = pvporcupine.create(
+                            access_key=access_key,
+                            keyword_paths=custom_model_paths,
+                            sensitivities=self.wake_words_sensitivities[:len(custom_model_paths)]
+                        )
+                    elif builtin_keywords and not custom_model_paths:
+                        # Only built-in keywords
+                        self.porcupine = pvporcupine.create(
+                            access_key=access_key,
+                            keywords=builtin_keywords,
+                            sensitivities=self.wake_words_sensitivities[:len(builtin_keywords)]
+                        )
+                    else:
+                        # Mixed - not supported, use built-in only
+                        logger.warning("Mixed custom and built-in wake words not supported. Using built-in keywords only.")
+                        self.porcupine = pvporcupine.create(
+                            access_key=access_key,
+                            keywords=builtin_keywords,
+                            sensitivities=self.wake_words_sensitivities[:len(builtin_keywords)]
+                        )
                     self.buffer_size = self.porcupine.frame_length
                     self.sample_rate = self.porcupine.sample_rate
 

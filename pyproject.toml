@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "realtimestt-mac"
+version = "0.3.104"
+description = "A fast Voice Activity Detection and Transcription System with Apple Silicon support"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Kolja Beigel", email = "kolja.beigel@web.de"},
+    {name = "Tom Whiting", email = "tom@tomwhiting.com"},
+]
+keywords = [
+    "real-time", "audio", "transcription", "speech-to-text", 
+    "voice-activity-detection", "VAD", "real-time-transcription",
+    "ambient-noise-detection", "microphone-input", "faster_whisper",
+    "speech-recognition", "voice-assistants", "audio-processing",
+    "buffered-transcription", "pyaudio", "ambient-noise-level",
+    "voice-deactivity", "apple-silicon", "porcupine"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "PyAudio==0.2.14",
+    "faster-whisper==1.1.1",
+    "pvporcupine>=3.0.0",
+    "webrtcvad-wheels==2.0.14",
+    "halo==0.0.31",
+    "torch",
+    "torchaudio",
+    "scipy==1.15.2",
+    "openwakeword>=0.4.0",
+    "websockets==15.0.1",
+    "websocket-client==1.8.0",
+    "soundfile==0.13.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/tomWhiting/RealtimeSTT-mac"
+Repository = "https://github.com/tomWhiting/RealtimeSTT-mac"
+Issues = "https://github.com/tomWhiting/RealtimeSTT-mac/issues"
+
+[project.scripts]
+stt-server = "RealtimeSTT_server.stt_server:main"
+stt = "RealtimeSTT_server.stt_cli_client:main"
+
+[tool.setuptools.packages.find]
+include = ["RealtimeSTT*"]
+
+[tool.setuptools.package-data]
+RealtimeSTT = ["warmup_audio.wav"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "black>=22.0.0",
+    "isort>=5.0.0",
+]
