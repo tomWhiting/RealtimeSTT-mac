@@ -26,7 +26,7 @@ Pre-converting to FP32 eliminates this repeated conversion, resulting in:
 
 ### Dependencies
 ```bash
-pip install faster-whisper huggingface-hub soundfile
+pip install faster-whisper huggingface-hub soundfile python-dotenv
 ```
 
 ### Required Tools
@@ -38,38 +38,49 @@ pip install faster-whisper huggingface-hub soundfile
 
 ### Quick Start
 
-1. **Prepare test audio**: Record a short audio clip (5-10 seconds) and note the exact transcription
-2. **Set up configuration**: Copy `config.example.json` to `config.json` and fill in your details
+1. **Set up environment**: Copy `.env` file in project root and add your HuggingFace token
+2. **Prepare test audio**: Create test audio using the helper script or record your own
 3. **Run the script**:
 
 ```bash
-python convert_and_benchmark_models.py \
-  --hf-token YOUR_HF_TOKEN \
-  --target-org your-hf-org \
-  --test-audio test_audio.wav \
-  --expected-text "The exact text from your audio file"
+# Create test audio (optional - you can use your own)
+python create_test_audio.py --preset realtime --output test_audio.wav
+
+# Convert and benchmark all models
+python convert_and_benchmark_models.py
+```
+
+### Environment Setup
+
+**Create/edit `.env` file in project root:**
+```bash
+HF_TOKEN=your_huggingface_token_here
+HF_ORG=RocketFish
+HF_COLLECTION_ID=685c24dfdef22726400ff961
+TEST_AUDIO_PATH=DevUtils/test_audio.wav
+EXPECTED_TEXT=This is a test of real-time speech to text transcription using Apple Silicon optimization
 ```
 
 ### Advanced Usage
 
 **Process specific models only:**
 ```bash
-python convert_and_benchmark_models.py \
-  --hf-token YOUR_TOKEN \
-  --target-org realtimestt-mac \
-  --test-audio test.wav \
-  --expected-text "test transcription" \
-  --models "tiny,base,small"
+python convert_and_benchmark_models.py --models "tiny,base,small"
 ```
 
-**Test single model:**
+**Override environment settings:**
 ```bash
 python convert_and_benchmark_models.py \
   --hf-token YOUR_TOKEN \
-  --target-org realtimestt-mac \
-  --test-audio test.wav \
-  --expected-text "test transcription" \
+  --target-org your-org \
+  --test-audio custom_test.wav \
+  --expected-text "custom test transcription" \
   --models "tiny"
+```
+
+**Create public repositories:**
+```bash
+python convert_and_benchmark_models.py --no-private
 ```
 
 ## Output
@@ -114,10 +125,18 @@ Each converted model gets a comprehensive README with:
 - Technical details
 
 ### HuggingFace Repositories
-Models are uploaded to `{target-org}/{model-name}-fp32` with:
-- Converted model files
+Models are uploaded to `{target-org}/{original-model-name}` with:
+- Converted model files (FP32)
 - Generated README with benchmarks
 - Proper model metadata
+- **Private by default** (can be made public later)
+- **Auto-added to collection** for easy management
+
+### Collection Management
+- Models are automatically added to your HuggingFace collection
+- Collection ID is configurable via environment variables
+- Existing repositories are updated (not duplicated)
+- Failed uploads don't break the entire pipeline
 
 ## Example Output
 
@@ -154,8 +173,20 @@ TINY:
 
 ## Configuration
 
+### Environment Variables (.env)
+The script uses environment variables for configuration:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HF_TOKEN` | HuggingFace API token | Required |
+| `HF_ORG` | Target organization | RocketFish |
+| `HF_COLLECTION_ID` | Collection to add models to | Optional |
+| `TEST_AUDIO_PATH` | Path to test audio | Required |
+| `EXPECTED_TEXT` | Expected transcription | Required |
+| `PRIVATE_REPOS` | Create private repos | true |
+
 ### Test Audio Requirements
-- **Format**: WAV file
+- **Format**: WAV file (other formats auto-converted)
 - **Duration**: 5-15 seconds recommended
 - **Content**: Clear speech, representative of typical use cases
 - **Quality**: Good signal-to-noise ratio
@@ -165,6 +196,12 @@ You can process:
 - **All models** (default): Processes every model in `faster_whisper_models.json`
 - **Specific models**: Use `--models` flag with comma-separated list
 - **Model subsets**: Useful for testing or gradual deployment
+
+### Repository Management
+- **Private by default**: All repositories created as private initially
+- **Collection integration**: Automatically added to specified collection
+- **Naming consistency**: Uses same names as original models
+- **Update existing**: Overwrites existing repositories safely
 
 ## Troubleshooting
 
@@ -204,8 +241,11 @@ conda install -c conda-forge ctranslate2
 DevUtils/
 ├── README.md                           # This file
 ├── convert_and_benchmark_models.py     # Main conversion script
+├── create_test_audio.py                # Test audio generator
 ├── config.example.json                 # Example configuration
 └── model_conversion_workspace/         # Temporary workspace (auto-created)
+
+../.env                                 # Environment configuration (project root)
 ```
 
 ## Integration with RealtimeSTT-mac

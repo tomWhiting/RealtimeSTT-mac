@@ -1,0 +1,126 @@
+{
+  "description": "Model selection configuration for RealtimeSTT-mac conversion pipeline",
+  "models": {
+    "tiny.en": {
+      "include": true,
+      "source_repo": "Systran/faster-whisper-tiny.en",
+      "priority": 1,
+      "notes": "Fastest model, English-only"
+    },
+    "tiny": {
+      "include": true,
+      "source_repo": "Systran/faster-whisper-tiny",
+      "priority": 2,
+      "notes": "Fastest model, multilingual"
+    },
+    "base.en": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-base.en",
+      "priority": 3,
+      "notes": "Good balance, English-only"
+    },
+    "base": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-base",
+      "priority": 4,
+      "notes": "Good balance, multilingual"
+    },
+    "small.en": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-small.en",
+      "priority": 5,
+      "notes": "Better accuracy, English-only"
+    },
+    "small": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-small",
+      "priority": 6,
+      "notes": "Better accuracy, multilingual"
+    },
+    "medium.en": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-medium.en",
+      "priority": 7,
+      "notes": "High accuracy, English-only"
+    },
+    "medium": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-medium",
+      "priority": 8,
+      "notes": "High accuracy, multilingual"
+    },
+    "large-v1": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-large-v1",
+      "priority": 9,
+      "notes": "Highest accuracy, v1"
+    },
+    "large-v2": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-large-v2",
+      "priority": 10,
+      "notes": "Highest accuracy, v2"
+    },
+    "large-v3": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-large-v3",
+      "priority": 11,
+      "notes": "Latest and best accuracy"
+    },
+    "large": {
+      "include": false,
+      "source_repo": "Systran/faster-whisper-large-v3",
+      "priority": 12,
+      "notes": "Alias for large-v3"
+    },
+    "distil-large-v2": {
+      "include": false,
+      "source_repo": "Systran/faster-distil-whisper-large-v2",
+      "priority": 13,
+      "notes": "Distilled version, faster inference"
+    },
+    "distil-medium.en": {
+      "include": false,
+      "source_repo": "Systran/faster-distil-whisper-medium.en",
+      "priority": 14,
+      "notes": "Distilled medium, English-only"
+    },
+    "distil-small.en": {
+      "include": false,
+      "source_repo": "Systran/faster-distil-whisper-small.en",
+      "priority": 15,
+      "notes": "Distilled small, English-only"
+    },
+    "distil-large-v3": {
+      "include": false,
+      "source_repo": "Systran/faster-distil-whisper-large-v3",
+      "priority": 16,
+      "notes": "Latest distilled version"
+    },
+    "distil-large-v3.5": {
+      "include": false,
+      "source_repo": "distil-whisper/distil-large-v3.5-ct2",
+      "priority": 17,
+      "notes": "Newest distilled version"
+    },
+    "large-v3-turbo": {
+      "include": false,
+      "source_repo": "mobiuslabsgmbh/faster-whisper-large-v3-turbo",
+      "priority": 18,
+      "notes": "Optimized for speed"
+    },
+    "turbo": {
+      "include": false,
+      "source_repo": "mobiuslabsgmbh/faster-whisper-large-v3-turbo",
+      "priority": 19,
+      "notes": "Alias for large-v3-turbo"
+    }
+  },
+  "settings": {
+    "process_only_included": true,
+    "respect_priority_order": true,
+    "skip_existing_repos": false,
+    "batch_size": 1,
+    "notes": "Set include=true for models you want to process. Priority determines processing order."
+  }
+}

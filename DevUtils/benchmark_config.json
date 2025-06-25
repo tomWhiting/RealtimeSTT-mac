@@ -1,0 +1,62 @@
+{
+  "description": "Benchmark configuration for RealtimeSTT-mac model performance testing",
+  "version": "1.0",
+  "benchmark_samples": [
+    {
+      "id": "tech_speech_sample_1",
+      "name": "Technical Speech Sample",
+      "file_path": "bench.wav",
+      "description": "Technical vocabulary with varied sentence structure, single male speaker",
+      "metadata": {
+        "duration_seconds": 38.0,
+        "word_count": 79,
+        "character_count": 482,
+        "speaker_info": "single, male",
+        "words_per_second": 2.08,
+        "characters_per_second": 12.68,
+        "language": "en",
+        "audio_quality": "high",
+        "background_noise": "minimal"
+      },
+      "expected_transcript": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in Rust has begun. Aware that this venture may never truly launch, the promise of optimisation comes with both a blessing and a curse. The investors will have to wait.",
+      "active": true
+    }
+  ],
+  "benchmark_settings": {
+    "default_sample_id": "tech_speech_sample_1",
+    "measurement_runs": 3,
+    "warmup_runs": 0,
+    "cold_start_measurement": true,
+    "language_hint": "en",
+    "beam_size": 5,
+    "compute_type": "float32",
+    "device": "cpu"
+  },
+  "performance_metrics": {
+    "model_load_time_ms": {
+      "description": "Time to load model from cold start",
+      "unit": "milliseconds"
+    },
+    "transcription_time_per_audio_second_ms": {
+      "description": "Transcription time normalized per second of input audio",
+      "unit": "milliseconds per audio second"
+    },
+    "transcription_time_per_word_ms": {
+      "description": "Transcription time normalized per word in output",
+      "unit": "milliseconds per word"
+    },
+    "transcription_accuracy_percent": {
+      "description": "Word-level accuracy compared to expected transcript",
+      "unit": "percentage"
+    },
+    "real_time_factor": {
+      "description": "Ratio of processing time to audio duration (lower is better)",
+      "unit": "ratio"
+    }
+  },
+  "output_settings": {
+    "model_registry_file": "../model_registry.json",
+    "benchmarks_file": "benchmarks.json",
+    "detailed_results_file": "benchmark_results_detailed.json"
+  }
+}
