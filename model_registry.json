@@ -1,1 +1,170 @@
-{}
+{
+  "tiny.en": {
+    "fp16": {
+      "repo": "Systran/faster-whisper-tiny.en",
+      "repo_url": "https://huggingface.co/Systran/faster-whisper-tiny.en",
+      "readme_url": "https://huggingface.co/Systran/faster-whisper-tiny.en/blob/main/README.md",
+      "size_mb": 74.5,
+      "download_size_kb": 76288.0,
+      "performance_data": {
+        "model_load_time_ms": 112.9,
+        "transcription_time_per_audio_second_ms": 35.1,
+        "transcription_time_per_word_ms": 16.9,
+        "transcription_accuracy_percent": 93.7
+      }
+    },
+    "fp32": {
+      "repo": "RocketFish/faster-whisper-tiny.en",
+      "repo_url": "https://huggingface.co/RocketFish/faster-whisper-tiny.en",
+      "readme_url": "https://huggingface.co/RocketFish/faster-whisper-tiny.en/blob/main/README.md",
+      "size_mb": 147.2,
+      "download_size_kb": 150732.8,
+      "performance_data": {
+        "model_load_time_ms": 107.2,
+        "transcription_time_per_audio_second_ms": 35.0,
+        "transcription_time_per_word_ms": 16.8,
+        "transcription_accuracy_percent": 93.7
+      }
+    }
+  },
+  "tiny": {
+    "fp16": {
+      "repo": "Systran/faster-whisper-tiny",
+      "repo_url": "https://huggingface.co/Systran/faster-whisper-tiny",
+      "readme_url": "https://huggingface.co/Systran/faster-whisper-tiny/blob/main/README.md",
+      "size_mb": 74.6,
+      "download_size_kb": 76390.4,
+      "performance_data": {
+        "model_load_time_ms": 133.6,
+        "transcription_time_per_audio_second_ms": 39.5,
+        "transcription_time_per_word_ms": 19.0,
+        "transcription_accuracy_percent": 91.8
+      }
+    },
+    "fp32": {
+      "repo": "RocketFish/faster-whisper-tiny",
+      "repo_url": "https://huggingface.co/RocketFish/faster-whisper-tiny",
+      "readme_url": "https://huggingface.co/RocketFish/faster-whisper-tiny/blob/main/README.md",
+      "size_mb": 147.5,
+      "download_size_kb": 151040.0,
+      "performance_data": {
+        "model_load_time_ms": 111.1,
+        "transcription_time_per_audio_second_ms": 45.5,
+        "transcription_time_per_word_ms": 21.9,
+        "transcription_accuracy_percent": 91.8
+      }
+    }
+  },
+  "base.en": {
+    "fp16": {
+      "repo": "Systran/faster-whisper-base.en",
+      "repo_url": "https://huggingface.co/Systran/faster-whisper-base.en",
+      "readme_url": "https://huggingface.co/Systran/faster-whisper-base.en/blob/main/README.md",
+      "size_mb": 140.9,
+      "download_size_kb": 144281.6,
+      "performance_data": {
+        "model_load_time_ms": 197.4,
+        "transcription_time_per_audio_second_ms": 83.7,
+        "transcription_time_per_word_ms": 40.2,
+        "transcription_accuracy_percent": 100.0
+      }
+    },
+    "fp32": {
+      "repo": "RocketFish/faster-whisper-base.en",
+      "repo_url": "https://huggingface.co/RocketFish/faster-whisper-base.en",
+      "readme_url": "https://huggingface.co/RocketFish/faster-whisper-base.en/blob/main/README.md",
+      "size_mb": 280.1,
+      "download_size_kb": 286822.4,
+      "performance_data": {
+        "model_load_time_ms": 150.6,
+        "transcription_time_per_audio_second_ms": 89.0,
+        "transcription_time_per_word_ms": 42.8,
+        "transcription_accuracy_percent": 100.0
+      }
+    }
+  },
+  "base": {
+    "fp16": {
+      "repo": "Systran/faster-whisper-base",
+      "repo_url": "https://huggingface.co/Systran/faster-whisper-base",
+      "readme_url": "https://huggingface.co/Systran/faster-whisper-base/blob/main/README.md",
+      "size_mb": 141.0,
+      "download_size_kb": 144384.0,
+      "performance_data": {
+        "model_load_time_ms": 201.1,
+        "transcription_time_per_audio_second_ms": 78.7,
+        "transcription_time_per_word_ms": 37.9,
+        "transcription_accuracy_percent": 95.5
+      }
+    },
+    "fp32": {
+      "repo": "RocketFish/faster-whisper-base",
+      "repo_url": "https://huggingface.co/RocketFish/faster-whisper-base",
+      "readme_url": "https://huggingface.co/RocketFish/faster-whisper-base/blob/main/README.md",
+      "size_mb": 280.4,
+      "download_size_kb": 287129.6,
+      "performance_data": {
+        "model_load_time_ms": 167.4,
+        "transcription_time_per_audio_second_ms": 109.6,
+        "transcription_time_per_word_ms": 52.7,
+        "transcription_accuracy_percent": 95.5
+      }
+    }
+  },
+  "small.en": {
+    "fp16": {
+      "repo": "Systran/faster-whisper-small.en",
+      "repo_url": "https://huggingface.co/Systran/faster-whisper-small.en",
+      "readme_url": "https://huggingface.co/Systran/faster-whisper-small.en/blob/main/README.md",
+      "size_mb": 463.6,
+      "download_size_kb": 474726.4,
+      "performance_data": {
+        "model_load_time_ms": 536.4,
+        "transcription_time_per_audio_second_ms": 208.1,
+        "transcription_time_per_word_ms": 100.1,
+        "transcription_accuracy_percent": 100.0
+      }
+    },
+    "fp32": {
+      "repo": "RocketFish/faster-whisper-small.en",
+      "repo_url": "https://huggingface.co/RocketFish/faster-whisper-small.en",
+      "readme_url": "https://huggingface.co/RocketFish/faster-whisper-small.en/blob/main/README.md",
+      "size_mb": 925.4,
+      "download_size_kb": 947609.6,
+      "performance_data": {
+        "model_load_time_ms": 439.3,
+        "transcription_time_per_audio_second_ms": 250.3,
+        "transcription_time_per_word_ms": 120.4,
+        "transcription_accuracy_percent": 100.0
+      }
+    }
+  },
+  "small": {
+    "fp16": {
+      "repo": "Systran/faster-whisper-small",
+      "repo_url": "https://huggingface.co/Systran/faster-whisper-small",
+      "readme_url": "https://huggingface.co/Systran/faster-whisper-small/blob/main/README.md",
+      "size_mb": 463.7,
+      "download_size_kb": 474828.8,
+      "performance_data": {
+        "model_load_time_ms": 596.2,
+        "transcription_time_per_audio_second_ms": 258.3,
+        "transcription_time_per_word_ms": 124.2,
+        "transcription_accuracy_percent": 96.2
+      }
+    },
+    "fp32": {
+      "repo": "RocketFish/faster-whisper-small",
+      "repo_url": "https://huggingface.co/RocketFish/faster-whisper-small",
+      "readme_url": "https://huggingface.co/RocketFish/faster-whisper-small/blob/main/README.md",
+      "size_mb": 925.7,
+      "download_size_kb": 947916.8,
+      "performance_data": {
+        "model_load_time_ms": 357.1,
+        "transcription_time_per_audio_second_ms": 297.2,
+        "transcription_time_per_word_ms": 143.0,
+        "transcription_accuracy_percent": 96.2
+      }
+    }
+  }
+}

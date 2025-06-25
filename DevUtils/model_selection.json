@@ -3,124 +3,129 @@
   "models": {
     "tiny.en": {
       "include": true,
-      "source_repo": "Systran/faster-whisper-tiny.en",
+      "source_repo": "openai/whisper-tiny.en",
       "priority": 1,
-      "notes": "Fastest model, English-only"
+      "notes": "Fastest model, English-only",
+      "conversion_files": ["tokenizer.json"]
     },
     "tiny": {
       "include": true,
-      "source_repo": "Systran/faster-whisper-tiny",
+      "source_repo": "openai/whisper-tiny",
       "priority": 2,
-      "notes": "Fastest model, multilingual"
+      "notes": "Fastest model, multilingual",
+      "conversion_files": ["tokenizer.json"]
     },
     "base.en": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-base.en",
+      "include": true,
+      "source_repo": "openai/whisper-base.en",
       "priority": 3,
-      "notes": "Good balance, English-only"
+      "notes": "Good balance, English-only",
+      "conversion_files": ["tokenizer.json"]
     },
     "base": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-base",
+      "include": true,
+      "source_repo": "openai/whisper-base",
       "priority": 4,
-      "notes": "Good balance, multilingual"
+      "notes": "Good balance, multilingual",
+      "conversion_files": ["tokenizer.json"]
     },
     "small.en": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-small.en",
+      "include": true,
+      "source_repo": "openai/whisper-small.en",
       "priority": 5,
-      "notes": "Better accuracy, English-only"
+      "notes": "Better accuracy, English-only",
+      "conversion_files": ["tokenizer.json"]
     },
     "small": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-small",
+      "include": true,
+      "source_repo": "openai/whisper-small",
       "priority": 6,
-      "notes": "Better accuracy, multilingual"
+      "notes": "Better accuracy, multilingual",
+      "conversion_files": ["tokenizer.json"]
     },
     "medium.en": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-medium.en",
+      "include": true,
+      "source_repo": "openai/whisper-medium.en",
       "priority": 7,
-      "notes": "High accuracy, English-only"
+      "notes": "High accuracy, English-only",
+      "conversion_files": ["tokenizer.json"]
     },
     "medium": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-medium",
+      "include": true,
+      "source_repo": "openai/whisper-medium",
       "priority": 8,
-      "notes": "High accuracy, multilingual"
+      "notes": "High accuracy, multilingual",
+      "conversion_files": ["tokenizer.json"]
     },
     "large-v1": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-large-v1",
+      "include": true,
+      "source_repo": "openai/whisper-large-v1",
       "priority": 9,
-      "notes": "Highest accuracy, v1"
+      "notes": "Highest accuracy, v1",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "large-v2": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-large-v2",
+      "include": true,
+      "source_repo": "openai/whisper-large-v2",
       "priority": 10,
-      "notes": "Highest accuracy, v2"
+      "notes": "Highest accuracy, v2",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "large-v3": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-large-v3",
+      "include": true,
+      "source_repo": "openai/whisper-large-v3",
       "priority": 11,
-      "notes": "Latest and best accuracy"
-    },
-    "large": {
-      "include": false,
-      "source_repo": "Systran/faster-whisper-large-v3",
-      "priority": 12,
-      "notes": "Alias for large-v3"
+      "notes": "Latest and best accuracy",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "distil-large-v2": {
-      "include": false,
-      "source_repo": "Systran/faster-distil-whisper-large-v2",
-      "priority": 13,
-      "notes": "Distilled version, faster inference"
+      "include": true,
+      "source_repo": "distil-whisper/distil-large-v2",
+      "priority": 12,
+      "notes": "Distilled version, faster inference",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "distil-medium.en": {
-      "include": false,
-      "source_repo": "Systran/faster-distil-whisper-medium.en",
-      "priority": 14,
-      "notes": "Distilled medium, English-only"
+      "include": true,
+      "source_repo": "distil-whisper/distil-medium.en",
+      "priority": 13,
+      "notes": "Distilled medium, English-only",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "distil-small.en": {
-      "include": false,
-      "source_repo": "Systran/faster-distil-whisper-small.en",
-      "priority": 15,
-      "notes": "Distilled small, English-only"
+      "include": true,
+      "source_repo": "distil-whisper/distil-small.en",
+      "priority": 14,
+      "notes": "Distilled small, English-only",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "distil-large-v3": {
-      "include": false,
-      "source_repo": "Systran/faster-distil-whisper-large-v3",
-      "priority": 16,
-      "notes": "Latest distilled version"
+      "include": true,
+      "source_repo": "distil-whisper/distil-large-v3",
+      "priority": 15,
+      "notes": "Latest distilled version",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "distil-large-v3.5": {
-      "include": false,
-      "source_repo": "distil-whisper/distil-large-v3.5-ct2",
-      "priority": 17,
-      "notes": "Newest distilled version"
-    },
-    "large-v3-turbo": {
-      "include": false,
-      "source_repo": "mobiuslabsgmbh/faster-whisper-large-v3-turbo",
-      "priority": 18,
-      "notes": "Optimized for speed"
-    },
-    "turbo": {
-      "include": false,
-      "source_repo": "mobiuslabsgmbh/faster-whisper-large-v3-turbo",
-      "priority": 19,
-      "notes": "Alias for large-v3-turbo"
+      "include": true,
+      "source_repo": "distil-whisper/distil-large-v3.5",
+      "priority": 16,
+      "notes": "Newest distilled version",
+      "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     }
+  },
+  "conversion_settings": {
+    "base_command": "ct2-transformers-converter",
+    "default_quantization": "float32",
+    "fallback_quantization": "float16",
+    "output_dir_pattern": "{model_name}-fp32",
+    "force_conversion": true
   },
   "settings": {
     "process_only_included": true,
     "respect_priority_order": true,
     "skip_existing_repos": false,
     "batch_size": 1,
-    "notes": "Set include=true for models you want to process. Priority determines processing order."
+    "notes": "Set include=true for models you want to process. Now uses original OpenAI/distil-whisper models as sources for FP32 conversion."
   }
 }
