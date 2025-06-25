@@ -7,8 +7,10 @@ When you initialize the `AudioToTextRecorder` class, you have various options to
 #### General Parameters
 
 - **model** (str, default="tiny"): Model size or path for transcription.
-    - Options: 'tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large-v1', 'large-v2'.
-    - Note: If a size is provided, the model will be downloaded from the Hugging Face Hub.
+    - Predefined sizes: 'tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large-v1', 'large-v2'.
+    - Hugging Face model identifiers: e.g., 'distil-whisper/distil-large-v3', 'deepdml/faster-whisper-large-v3.5'
+    - Local path to a converted model directory
+    - Note: If a predefined size is provided, the model will be downloaded from the Hugging Face Hub.
 
 - **language** (str, default=""): Language code for transcription. If left empty, the model will try to auto-detect the language. Supported language codes are listed in [Whisper Tokenizer library](https://github.com/openai/whisper/blob/main/whisper/tokenizer.py).
 
@@ -71,7 +73,9 @@ When you initialize the `AudioToTextRecorder` class, you have various options to
 - **use_main_model_for_realtime** (bool, default=False): If set to True, the main transcription model will be used for both regular and real-time transcription. If False, a separate model specified by `realtime_model_type` will be used for real-time transcription. Using a single model can save memory and potentially improve performance, but may not be optimized for real-time processing. Using separate models allows for a smaller, faster model for real-time transcription while keeping a more accurate model for final transcription.
 
 - **realtime_model_type** (str, default="tiny"): Specifies the size or path of the machine learning model to be used for real-time transcription.
-    - Valid options: 'tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large-v1', 'large-v2'.
+    - Predefined sizes: 'tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large-v1', 'large-v2'.
+    - Hugging Face model identifiers: e.g., 'distil-whisper/distil-large-v3', 'deepdml/faster-whisper-large-v3.5'
+    - Local path to a converted model directory
 
 - **realtime_processing_pause** (float, default=0.2): Specifies the time interval in seconds after a chunk of audio gets transcribed. Lower values will result in more "real-time" (frequent) transcription updates but may increase computational load.
 

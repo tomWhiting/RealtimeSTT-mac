@@ -1,0 +1,43 @@
+{
+  "hf_token": "your_huggingface_token_here",
+  "target_org": "realtimestt-mac",
+  "test_audio": {
+    "path": "test_audio.wav",
+    "expected_text": "The quick brown fox jumps over the lazy dog"
+  },
+  "models_to_process": [
+    "tiny",
+    "tiny.en",
+    "base",
+    "base.en",
+    "small",
+    "small.en",
+    "medium",
+    "medium.en",
+    "large-v1",
+    "large-v2",
+    "large-v3"
+  ],
+  "conversion_settings": {
+    "quantization": "float32",
+    "copy_files": ["tokenizer.json", "preprocessor_config.json"],
+    "device": "cpu",
+    "compute_type": "float32"
+  },
+  "upload_settings": {
+    "private": false,
+    "create_readme": true,
+    "include_benchmarks": true
+  },
+  "benchmark_settings": {
+    "language": "en",
+    "beam_size": 5,
+    "warmup_runs": 1,
+    "measurement_runs": 3
+  },
+  "workspace": {
+    "temp_dir": "./model_conversion_workspace",
+    "cleanup_after_processing": true,
+    "keep_converted_models": false
+  }
+}

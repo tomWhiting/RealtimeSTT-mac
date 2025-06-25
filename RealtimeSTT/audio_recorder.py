@@ -867,8 +867,6 @@ class AudioToTextRecorder:
 
             if wake_words and self.wakeword_backend in {"pvp", "pvporcupine"}:
                 try:
-                    import os
-
                     access_key = os.getenv("PORCUPINE_ACCESS_KEY")
                     if not access_key:
                         raise ValueError(
