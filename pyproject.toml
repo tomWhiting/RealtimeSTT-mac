@@ -25,7 +25,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.11,<3.13"
 dependencies = [
     "PyAudio==0.2.14",
     "faster-whisper==1.1.1",

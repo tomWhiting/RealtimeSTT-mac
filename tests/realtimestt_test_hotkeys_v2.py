@@ -1,7 +1,6 @@
 EXTENDED_LOGGING = False
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     import subprocess
     import sys
     import threading
@@ -13,11 +12,13 @@ if __name__ == '__main__':
     try:
         import rich
     except ImportError:
-        user_input = input("This demo needs the 'rich' library, which is not installed.\nDo you want to install it now? (y/n): ")
-        if user_input.lower() == 'y':
+        user_input = input(
+            "This demo needs the 'rich' library, which is not installed.\nDo you want to install it now? (y/n): "
+        )
+        if user_input.lower() == "y":
             try:
                 install_rich()
-                import rich
+
                 print("Successfully installed 'rich'.")
             except Exception as e:
                 print(f"An error occurred while installing 'rich': {e}")
@@ -31,19 +32,23 @@ if __name__ == '__main__':
 
     if EXTENDED_LOGGING:
         import logging
+
         logging.basicConfig(level=logging.DEBUG)
 
     from rich.console import Console
     from rich.live import Live
     from rich.text import Text
     from rich.panel import Panel
+
     console = Console()
     console.print("System initializing, please wait")
 
-    import os
-    from RealtimeSTT import AudioToTextRecorder  # Ensure this module has stop() or close() methods
+    from RealtimeSTT import (
+        AudioToTextRecorder,
+    )  # Ensure this module has stop() or close() methods
 
     import colorama
+
     colorama.init()
 
     # Import pyautogui
@@ -94,10 +99,15 @@ if __name__ == '__main__':
 
         text = preprocess_text(text)
 
-        sentence_end_marks = ['.', '!', '?', '。']
+        sentence_end_marks = [".", "!", "?", "。"]
         if text.endswith("..."):
             recorder.post_speech_silence_duration = mid_sentence_detection_pause
-        elif text and text[-1] in sentence_end_marks and prev_text and prev_text[-1] in sentence_end_marks:
+        elif (
+            text
+            and text[-1] in sentence_end_marks
+            and prev_text
+            and prev_text[-1] in sentence_end_marks
+        ):
             recorder.post_speech_silence_duration = end_of_sentence_detection_pause
         else:
             recorder.post_speech_silence_duration = unknown_sentence_detection_pause
@@ -120,7 +130,11 @@ if __name__ == '__main__':
 
         if new_displayed_text != displayed_text:
             displayed_text = new_displayed_text
-            panel = Panel(rich_text, title="[bold green]Live Transcription[/bold green]", border_style="bold green")
+            panel = Panel(
+                rich_text,
+                title="[bold green]Live Transcription[/bold green]",
+                border_style="bold green",
+            )
             live.update(panel)
             rich_text_stored = rich_text
 
@@ -148,49 +162,53 @@ if __name__ == '__main__':
         # Type the finalized sentence to the active window quickly if typing is enabled
         try:
             # Release modifier keys to prevent stuck keys
-            for key in ['ctrl', 'shift', 'alt', 'win']:
+            for key in ["ctrl", "shift", "alt", "win"]:
                 keyboard.release(key)
                 pyautogui.keyUp(key)
 
             # Use clipboard to paste text
-            pyperclip.copy(text + ' ')
-            pyautogui.hotkey('ctrl', 'v')
+            pyperclip.copy(text + " ")
+            pyautogui.hotkey("ctrl", "v")
 
         except Exception as e:
             console.print(f"[bold red]Failed to type the text: {e}[/bold red]")
 
     # Recorder configuration
     recorder_config = {
-        'spinner': False,
-        'model': 'Systran/faster-distil-whisper-large-v3',  # distil-medium.en or large-v2 or deepdml/faster-whisper-large-v3-turbo-ct2 or ...
-        'input_device_index': 1,
-        'realtime_model_type': 'Systran/faster-distil-whisper-large-v3',  # Using the same model for realtime
-        'language': 'en',
-        'silero_sensitivity': 0.05,
-        'webrtc_sensitivity': 3,
-        'post_speech_silence_duration': unknown_sentence_detection_pause,
-        'min_length_of_recording': 1.1,
-        'min_gap_between_recordings': 0,
-        'enable_realtime_transcription': True,
-        'realtime_processing_pause': 0.02,
-        'on_realtime_transcription_update': text_detected,
+        "spinner": False,
+        "model": "Systran/faster-distil-whisper-large-v3",  # distil-medium.en or large-v2 or deepdml/faster-whisper-large-v3-turbo-ct2 or ...
+        "input_device_index": 1,
+        "realtime_model_type": "Systran/faster-distil-whisper-large-v3",  # Using the same model for realtime
+        "language": "en",
+        "silero_sensitivity": 0.05,
+        "webrtc_sensitivity": 3,
+        "post_speech_silence_duration": unknown_sentence_detection_pause,
+        "min_length_of_recording": 1.1,
+        "min_gap_between_recordings": 0,
+        "enable_realtime_transcription": True,
+        "realtime_processing_pause": 0.02,
+        "on_realtime_transcription_update": text_detected,
         # 'on_realtime_transcription_stabilized': text_detected,
-        'silero_deactivity_detection': True,
-        'early_transcription_on_silence': 0,
-        'beam_size': 5,
-        'beam_size_realtime': 5,  # Matching beam_size for consistency
-        'no_log_file': True,
-        'initial_prompt': "Use ellipses for incomplete sentences like: I went to the...",
-        'device': 'cuda',          # Added device configuration
-        'compute_type': 'float16'  # Added compute_type configuration
+        "silero_deactivity_detection": True,
+        "early_transcription_on_silence": 0,
+        "beam_size": 5,
+        "beam_size_realtime": 5,  # Matching beam_size for consistency
+        "no_log_file": True,
+        "initial_prompt": "Use ellipses for incomplete sentences like: I went to the...",
+        "device": "cuda",  # Added device configuration
+        "compute_type": "float16",  # Added compute_type configuration
     }
 
     if EXTENDED_LOGGING:
-        recorder_config['level'] = logging.DEBUG
+        recorder_config["level"] = logging.DEBUG
 
     recorder = AudioToTextRecorder(**recorder_config)
 
-    initial_text = Panel(Text("Say something...", style="cyan bold"), title="[bold yellow]Waiting for Input[/bold yellow]", border_style="bold yellow")
+    initial_text = Panel(
+        Text("Say something...", style="cyan bold"),
+        title="[bold yellow]Waiting for Input[/bold yellow]",
+        border_style="bold yellow",
+    )
     live.update(initial_text)
 
     # Print available hotkeys
@@ -205,14 +223,16 @@ if __name__ == '__main__':
     static_recording_active = False
     static_recording_thread = None
     static_audio_frames = []
-    live_recording_enabled = True  # Track whether live recording was enabled before static recording
+    live_recording_enabled = (
+        True  # Track whether live recording was enabled before static recording
+    )
 
     # Audio settings for static recording
     audio_settings = {
-        'FORMAT': pyaudio.paInt16,  # PyAudio format
-        'CHANNELS': 1,               # Mono audio
-        'RATE': 16000,               # Sample rate
-        'CHUNK': 1024                # Buffer size
+        "FORMAT": pyaudio.paInt16,  # PyAudio format
+        "CHANNELS": 1,  # Mono audio
+        "RATE": 16000,  # Sample rate
+        "CHUNK": 1024,  # Buffer size
     }
 
     # Note: The maximum recommended length of static recording is about 5 minutes.
@@ -225,20 +245,24 @@ if __name__ == '__main__':
         # Set up pyaudio
         p = pyaudio.PyAudio()
         # Use the same audio format as defined in audio_settings
-        FORMAT = audio_settings['FORMAT']
-        CHANNELS = audio_settings['CHANNELS']
-        RATE = audio_settings['RATE']  # Sample rate
-        CHUNK = audio_settings['CHUNK']  # Buffer size
+        FORMAT = audio_settings["FORMAT"]
+        CHANNELS = audio_settings["CHANNELS"]
+        RATE = audio_settings["RATE"]  # Sample rate
+        CHUNK = audio_settings["CHUNK"]  # Buffer size
 
         # Open the audio stream
         try:
-            stream = p.open(format=FORMAT,
-                            channels=CHANNELS,
-                            rate=RATE,
-                            input=True,
-                            frames_per_buffer=CHUNK)
+            stream = p.open(
+                format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK,
+            )
         except Exception as e:
-            console.print(f"[bold red]Failed to open audio stream for static recording: {e}[/bold red]")
+            console.print(
+                f"[bold red]Failed to open audio stream for static recording: {e}[/bold red]"
+            )
             static_recording_active = False
             p.terminate()
             return
@@ -248,7 +272,9 @@ if __name__ == '__main__':
                 data = stream.read(CHUNK)
                 static_audio_frames.append(data)
             except Exception as e:
-                console.print(f"[bold red]Error during static recording: {e}[/bold red]")
+                console.print(
+                    f"[bold red]Error during static recording: {e}[/bold red]"
+                )
                 break
 
         # Stop and close the stream
@@ -260,21 +286,33 @@ if __name__ == '__main__':
         """
         Starts the static audio recording.
         """
-        global static_recording_active, static_recording_thread, static_audio_frames, live_recording_enabled
+        global \
+            static_recording_active, \
+            static_recording_thread, \
+            static_audio_frames, \
+            live_recording_enabled
         if static_recording_active:
-            console.print("[bold yellow]Static recording is already in progress.[/bold yellow]")
+            console.print(
+                "[bold yellow]Static recording is already in progress.[/bold yellow]"
+            )
             return
 
         # Mute the live recording microphone
         live_recording_enabled = recorder.use_microphone.value
         if live_recording_enabled:
             recorder.set_microphone(False)
-            console.print("[bold yellow]Live microphone muted during static recording.[/bold yellow]")
+            console.print(
+                "[bold yellow]Live microphone muted during static recording.[/bold yellow]"
+            )
 
-        console.print("[bold green]Starting static recording... Press F4 or F5 to stop/reset.[/bold green]")
+        console.print(
+            "[bold green]Starting static recording... Press F4 or F5 to stop/reset.[/bold green]"
+        )
         static_audio_frames = []
         static_recording_active = True
-        static_recording_thread = threading.Thread(target=static_recording_worker, daemon=True)
+        static_recording_thread = threading.Thread(
+            target=static_recording_worker, daemon=True
+        )
         static_recording_thread.start()
 
     def stop_static_recording():
@@ -283,7 +321,9 @@ if __name__ == '__main__':
         """
         global static_recording_active, static_recording_thread
         if not static_recording_active:
-            console.print("[bold yellow]No static recording is in progress.[/bold yellow]")
+            console.print(
+                "[bold yellow]No static recording is in progress.[/bold yellow]"
+            )
             return
 
         console.print("[bold green]Stopping static recording...[/bold green]")
@@ -293,7 +333,9 @@ if __name__ == '__main__':
             static_recording_thread = None
 
         # Start a new thread to process the transcription
-        processing_thread = threading.Thread(target=process_static_transcription, daemon=True)
+        processing_thread = threading.Thread(
+            target=process_static_transcription, daemon=True
+        )
         processing_thread.start()
 
     def process_static_transcription():
@@ -304,32 +346,40 @@ if __name__ == '__main__':
         console.print("[bold green]Processing static recording...[/bold green]")
 
         # Convert audio data to numpy array
-        audio_data = b''.join(static_audio_frames)
-        audio_array = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+        audio_data = b"".join(static_audio_frames)
+        audio_array = (
+            np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+        )
 
         # Transcribe the audio data
         try:
             from faster_whisper import WhisperModel
         except ImportError:
-            console.print("[bold red]faster_whisper is not installed. Please install it to use static transcription.[/bold red]")
+            console.print(
+                "[bold red]faster_whisper is not installed. Please install it to use static transcription.[/bold red]"
+            )
             return
 
         # Load the model using recorder_config
-        model_size = recorder_config['model']
-        device = recorder_config['device']
-        compute_type = recorder_config['compute_type']
+        model_size = recorder_config["model"]
+        device = recorder_config["device"]
+        compute_type = recorder_config["compute_type"]
 
         console.print("Loading transcription model... This may take a moment.")
         try:
             model = WhisperModel(model_size, device=device, compute_type=compute_type)
         except Exception as e:
-            console.print(f"[bold red]Failed to load transcription model: {e}[/bold red]")
+            console.print(
+                f"[bold red]Failed to load transcription model: {e}[/bold red]"
+            )
             return
 
         # Transcribe the audio
         try:
-            segments, info = model.transcribe(audio_array, beam_size=recorder_config['beam_size'])
-            transcription = ' '.join([segment.text for segment in segments]).strip()
+            segments, info = model.transcribe(
+                audio_array, beam_size=recorder_config["beam_size"]
+            )
+            transcription = " ".join([segment.text for segment in segments]).strip()
         except Exception as e:
             console.print(f"[bold red]Error during transcription: {e}[/bold red]")
             return
@@ -341,16 +391,18 @@ if __name__ == '__main__':
         # Type the transcription into the active window
         try:
             # Release modifier keys to prevent stuck keys
-            for key in ['ctrl', 'shift', 'alt', 'win']:
+            for key in ["ctrl", "shift", "alt", "win"]:
                 keyboard.release(key)
                 pyautogui.keyUp(key)
 
             # Use clipboard to paste text
-            pyperclip.copy(transcription + ' ')
-            pyautogui.hotkey('ctrl', 'v')
+            pyperclip.copy(transcription + " ")
+            pyautogui.hotkey("ctrl", "v")
 
         except Exception as e:
-            console.print(f"[bold red]Failed to type the static transcription: {e}[/bold red]")
+            console.print(
+                f"[bold red]Failed to type the static transcription: {e}[/bold red]"
+            )
 
         # Unmute the live recording microphone if it was enabled before
         if live_recording_enabled and not exit_event.is_set():
@@ -375,14 +427,20 @@ if __name__ == '__main__':
             # Unmute microphone if it was muted during static recording
             if live_recording_enabled:
                 recorder.set_microphone(True)
-                console.print("[bold yellow]Live microphone unmuted after reset.[/bold yellow]")
+                console.print(
+                    "[bold yellow]Live microphone unmuted after reset.[/bold yellow]"
+                )
         elif recorder.use_microphone.value:
             # Live transcription is active and microphone is not muted
-            console.print("[bold magenta]Resetting live transcription buffer...[/bold magenta]")
+            console.print(
+                "[bold magenta]Resetting live transcription buffer...[/bold magenta]"
+            )
             reset_event.set()
         else:
             # Microphone is muted; nothing to reset
-            console.print("[bold yellow]Microphone is muted. Nothing to reset.[/bold yellow]")
+            console.print(
+                "[bold yellow]Microphone is muted. Nothing to reset.[/bold yellow]"
+            )
 
     # Hotkey Callback Functions
 
@@ -410,17 +468,19 @@ if __name__ == '__main__':
     transcription_thread.start()
 
     # Define the hotkey combinations and their corresponding functions
-    keyboard.add_hotkey('F1', mute_microphone, suppress=True)
-    keyboard.add_hotkey('F2', unmute_microphone, suppress=True)
-    keyboard.add_hotkey('F3', start_static_recording, suppress=True)
-    keyboard.add_hotkey('F4', stop_static_recording, suppress=True)
-    keyboard.add_hotkey('F5', reset_transcription, suppress=True)
+    keyboard.add_hotkey("F1", mute_microphone, suppress=True)
+    keyboard.add_hotkey("F2", unmute_microphone, suppress=True)
+    keyboard.add_hotkey("F3", start_static_recording, suppress=True)
+    keyboard.add_hotkey("F4", stop_static_recording, suppress=True)
+    keyboard.add_hotkey("F5", reset_transcription, suppress=True)
 
     # Keep the main thread running and handle graceful exit
     try:
         keyboard.wait()  # Waits indefinitely, until a hotkey triggers an exit or Ctrl+C
     except KeyboardInterrupt:
-        console.print("[bold yellow]KeyboardInterrupt received. Exiting...[/bold yellow]")
+        console.print(
+            "[bold yellow]KeyboardInterrupt received. Exiting...[/bold yellow]"
+        )
     finally:
         # Signal threads to exit
         exit_event.set()
@@ -430,9 +490,9 @@ if __name__ == '__main__':
 
         # Stop the recorder
         try:
-            if hasattr(recorder, 'stop'):
+            if hasattr(recorder, "stop"):
                 recorder.stop()
-            elif hasattr(recorder, 'close'):
+            elif hasattr(recorder, "close"):
                 recorder.close()
         except Exception as e:
             console.print(f"[bold red]Error stopping recorder: {e}[/bold red]")

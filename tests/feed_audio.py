@@ -4,16 +4,16 @@ if __name__ == "__main__":
     from RealtimeSTT import AudioToTextRecorder
 
     # Audio stream configuration constants
-    CHUNK = 1024                  # Number of audio samples per buffer
-    FORMAT = pyaudio.paInt16      # Sample format (16-bit integer)
-    CHANNELS = 1                  # Mono audio
-    RATE = 16000                  # Sampling rate in Hz (expected by the recorder)
+    CHUNK = 1024  # Number of audio samples per buffer
+    FORMAT = pyaudio.paInt16  # Sample format (16-bit integer)
+    CHANNELS = 1  # Mono audio
+    RATE = 16000  # Sampling rate in Hz (expected by the recorder)
 
     # Initialize the audio-to-text recorder without using the microphone directly
     # Since we are feeding audio data manually, set use_microphone to False
     recorder = AudioToTextRecorder(
-        use_microphone=False,     # Disable built-in microphone usage
-        spinner=False             # Disable spinner animation in the console
+        use_microphone=False,  # Disable built-in microphone usage
+        spinner=False,  # Disable spinner animation in the console
     )
 
     # Event to signal when to stop the threads
@@ -29,7 +29,7 @@ if __name__ == "__main__":
             channels=CHANNELS,
             rate=RATE,
             input=True,
-            frames_per_buffer=CHUNK
+            frames_per_buffer=CHUNK,
         )
 
         try:
@@ -50,6 +50,7 @@ if __name__ == "__main__":
 
     def recorder_transcription_thread():
         """Thread function to handle transcription and process the text."""
+
         def process_text(full_sentence):
             """Callback function to process the transcribed text."""
             print("Transcribed text:", full_sentence)
@@ -58,6 +59,7 @@ if __name__ == "__main__":
                 print("Stop command detected. Stopping threads...")
                 stop_event.set()
                 recorder.abort()
+
         try:
             while not stop_event.is_set():
                 # Get transcribed text and process it using the callback
@@ -69,12 +71,12 @@ if __name__ == "__main__":
 
     # Create and start the audio feeding thread
     audio_thread = threading.Thread(target=feed_audio_thread)
-    audio_thread.daemon = False    # Ensure the thread doesn't exit prematurely
+    audio_thread.daemon = False  # Ensure the thread doesn't exit prematurely
     audio_thread.start()
 
     # Create and start the transcription thread
     transcription_thread = threading.Thread(target=recorder_transcription_thread)
-    transcription_thread.daemon = False    # Ensure the thread doesn't exit prematurely
+    transcription_thread.daemon = False  # Ensure the thread doesn't exit prematurely
     transcription_thread.start()
 
     # Wait for both threads to finish

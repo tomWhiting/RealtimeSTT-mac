@@ -1,37 +1,38 @@
 EXTENDED_LOGGING = False
 
-def main():
 
+def main():
     from install_packages import check_and_install_packages
-    check_and_install_packages([
-        {
-            'import_name': 'rich',
-        }
-    ])
+
+    check_and_install_packages(
+        [
+            {
+                "import_name": "rich",
+            }
+        ]
+    )
 
     if EXTENDED_LOGGING:
         import logging
+
         logging.basicConfig(level=logging.DEBUG)
 
     import os
     import sys
     import threading
-    import time
     import pyaudio
     from rich.console import Console
     from rich.live import Live
     from rich.text import Text
     from rich.panel import Panel
-    from rich.spinner import Spinner
-    from rich.progress import Progress, SpinnerColumn, TextColumn
-    from colorama import Fore, Style, init as colorama_init
+    from colorama import init as colorama_init
 
-    from RealtimeSTT import AudioToTextRecorder 
+    from RealtimeSTT import AudioToTextRecorder
 
     # Configuration Constants
     LOOPBACK_DEVICE_NAME = "stereomix"
     LOOPBACK_DEVICE_HOST_API = 0
-    BUFFER_SIZE = 512 
+    BUFFER_SIZE = 512
     AUDIO_FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 16000
@@ -57,7 +58,7 @@ def main():
     prev_text = ""
 
     def clear_console():
-        os.system('clear' if os.name == 'posix' else 'cls')
+        os.system("clear" if os.name == "posix" else "cls")
 
     def preprocess_text(text):
         # Remove leading whitespaces
@@ -81,11 +82,16 @@ def main():
 
         text = preprocess_text(text)
 
-        sentence_end_marks = ['.', '!', '?', '。']
-        midsentence_marks = ['…', '-', '(']
+        sentence_end_marks = [".", "!", "?", "。"]
+        midsentence_marks = ["…", "-", "("]
         if text.endswith("...") or text and text[-1] in midsentence_marks:
             recorder.post_speech_silence_duration = mid_sentence_detection_pause
-        elif text and text[-1] in sentence_end_marks and prev_text and prev_text[-1] in sentence_end_marks:
+        elif (
+            text
+            and text[-1] in sentence_end_marks
+            and prev_text
+            and prev_text[-1] in sentence_end_marks
+        ):
             recorder.post_speech_silence_duration = end_of_sentence_detection_pause
         else:
             recorder.post_speech_silence_duration = unknown_sentence_detection_pause
@@ -108,7 +114,11 @@ def main():
 
         if new_displayed_text != displayed_text:
             displayed_text = new_displayed_text
-            panel = Panel(rich_text, title="[bold green]Live Transcription[/bold green]", border_style="bold green")
+            panel = Panel(
+                rich_text,
+                title="[bold green]Live Transcription[/bold green]",
+                border_style="bold green",
+            )
             live.update(panel)
             rich_text_stored = rich_text
 
@@ -126,30 +136,30 @@ def main():
 
     # Recorder configuration
     recorder_config = {
-        'spinner': False,
-        'use_microphone': False,
-        'model': 'large-v2',
-        'input_device_index': None,  # To be set after finding the device
-        'realtime_model_type': 'tiny.en',
-        'language': 'en',
-        'silero_sensitivity': 0.05,
-        'webrtc_sensitivity': 3,
-        'post_speech_silence_duration': unknown_sentence_detection_pause,
-        'min_length_of_recording': 2.0,        
-        'min_gap_between_recordings': 0,
-        'enable_realtime_transcription': True,
-        'realtime_processing_pause': 0.01,
-        'on_realtime_transcription_update': text_detected,
-        'silero_deactivity_detection': False,
-        'early_transcription_on_silence': 0,
-        'beam_size': 5,
-        'beam_size_realtime': 1,
-        'no_log_file': True,
-        'initial_prompt': "Use ellipses for incomplete sentences like: I went to the..."
+        "spinner": False,
+        "use_microphone": False,
+        "model": "large-v2",
+        "input_device_index": None,  # To be set after finding the device
+        "realtime_model_type": "tiny.en",
+        "language": "en",
+        "silero_sensitivity": 0.05,
+        "webrtc_sensitivity": 3,
+        "post_speech_silence_duration": unknown_sentence_detection_pause,
+        "min_length_of_recording": 2.0,
+        "min_gap_between_recordings": 0,
+        "enable_realtime_transcription": True,
+        "realtime_processing_pause": 0.01,
+        "on_realtime_transcription_update": text_detected,
+        "silero_deactivity_detection": False,
+        "early_transcription_on_silence": 0,
+        "beam_size": 5,
+        "beam_size_realtime": 1,
+        "no_log_file": True,
+        "initial_prompt": "Use ellipses for incomplete sentences like: I went to the...",
     }
 
     if EXTENDED_LOGGING:
-        recorder_config['level'] = logging.DEBUG
+        recorder_config["level"] = logging.DEBUG
 
     # Initialize PyAudio
     audio = pyaudio.PyAudio()
@@ -159,41 +169,55 @@ def main():
         devices_info = ""
         for i in range(audio.get_device_count()):
             dev = audio.get_device_info_by_index(i)
-            devices_info += f"{dev['index']}: {dev['name']} (hostApi: {dev['hostApi']})\n"
+            devices_info += (
+                f"{dev['index']}: {dev['name']} (hostApi: {dev['hostApi']})\n"
+            )
 
-            if (LOOPBACK_DEVICE_NAME.lower() in dev['name'].lower()
-                    and dev['hostApi'] == LOOPBACK_DEVICE_HOST_API):
-                return dev['index'], devices_info
+            if (
+                LOOPBACK_DEVICE_NAME.lower() in dev["name"].lower()
+                and dev["hostApi"] == LOOPBACK_DEVICE_HOST_API
+            ):
+                return dev["index"], devices_info
 
         return None, devices_info
 
     device_index, devices_info = find_stereo_mix_index()
     if device_index is None:
         live.stop()
-        console.print("[bold red]Stereo Mix device not found. Available audio devices are:\n[/bold red]")
+        console.print(
+            "[bold red]Stereo Mix device not found. Available audio devices are:\n[/bold red]"
+        )
         console.print(devices_info, style="red")
         audio.terminate()
         sys.exit(1)
     else:
-        recorder_config['input_device_index'] = device_index
-        console.print(f"Using audio device index {device_index} for Stereo Mix.", style="green")
+        recorder_config["input_device_index"] = device_index
+        console.print(
+            f"Using audio device index {device_index} for Stereo Mix.", style="green"
+        )
 
     # Initialize the recorder
     recorder = AudioToTextRecorder(**recorder_config)
 
     # Initialize Live Display with waiting message
-    initial_text = Panel(Text("Say something...", style="cyan bold"), title="[bold yellow]Waiting for Input[/bold yellow]", border_style="bold yellow")
+    initial_text = Panel(
+        Text("Say something...", style="cyan bold"),
+        title="[bold yellow]Waiting for Input[/bold yellow]",
+        border_style="bold yellow",
+    )
     live.update(initial_text)
 
     # Define the recording thread
     def recording_thread():
         nonlocal recorder
-        stream = audio.open(format=AUDIO_FORMAT,
-                            channels=CHANNELS,
-                            rate=RATE,
-                            input=True,
-                            frames_per_buffer=BUFFER_SIZE,
-                            input_device_index=recorder_config['input_device_index'])
+        stream = audio.open(
+            format=AUDIO_FORMAT,
+            channels=CHANNELS,
+            rate=RATE,
+            input=True,
+            frames_per_buffer=BUFFER_SIZE,
+            input_device_index=recorder_config["input_device_index"],
+        )
 
         try:
             while not stop_event.is_set():
@@ -202,7 +226,7 @@ def main():
         except Exception as e:
             console.print(f"[bold red]Error in recording thread: {e}[/bold red]")
         finally:
-            console.print(f"[bold red]Stopping stream[/bold red]")
+            console.print("[bold red]Stopping stream[/bold red]")
             stream.stop_stream()
             stream.close()
 
@@ -217,7 +241,9 @@ def main():
         while True:
             recorder.text(process_text)
     except KeyboardInterrupt:
-        console.print("[bold red]\nTranscription stopped by user. Exiting...[/bold red]")
+        console.print(
+            "[bold red]\nTranscription stopped by user. Exiting...[/bold red]"
+        )
     finally:
         print("live stop")
         live.stop()
@@ -237,5 +263,6 @@ def main():
         print("sys exit ")
         sys.exit(0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 import subprocess
 import sys
 
+
 def check_and_install_packages(packages):
     """
     Checks if the specified packages are installed, and if not, prompts the user
@@ -14,9 +15,9 @@ def check_and_install_packages(packages):
         - 'version': (Optional) Version constraint for the package.
     """
     for package in packages:
-        import_name = package['import_name']
-        install_name = package.get('install_name', import_name)
-        version = package.get('version', '')
+        import_name = package["import_name"]
+        install_name = package.get("install_name", import_name)
+        version = package.get("version", "")
 
         try:
             __import__(import_name)
@@ -25,7 +26,7 @@ def check_and_install_packages(packages):
                 f"This program requires the '{import_name}' library, which is not installed.\n"
                 f"Do you want to install it now? (y/n): "
             )
-            if user_input.strip().lower() == 'y':
+            if user_input.strip().lower() == "y":
                 try:
                     # Build the pip install command
                     install_command = [sys.executable, "-m", "pip", "install"]
@@ -41,5 +42,7 @@ def check_and_install_packages(packages):
                     print(f"An error occurred while installing '{install_name}': {e}")
                     sys.exit(1)
             else:
-                print(f"The program requires the '{import_name}' library to run. Exiting...")
+                print(
+                    f"The program requires the '{import_name}' library to run. Exiting..."
+                )
                 sys.exit(1)

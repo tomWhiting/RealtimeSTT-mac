@@ -2,7 +2,6 @@ import sys
 import multiprocessing as mp
 import queue
 import threading
-import time
 import logging
 
 # Configure logging. Adjust level and formatting as needed.
@@ -12,7 +11,9 @@ logger = logging.getLogger(__name__)
 
 try:
     # Only set the start method if it hasn't been set already.
-    if sys.platform.startswith('linux') or sys.platform == 'darwin':  # For Linux or macOS
+    if (
+        sys.platform.startswith("linux") or sys.platform == "darwin"
+    ):  # For Linux or macOS
         mp.set_start_method("spawn")
     elif mp.get_start_method(allow_none=True) is None:
         mp.set_start_method("spawn")
@@ -27,6 +28,7 @@ class ParentPipe:
     for multiple threads to call send(), recv(), or poll() on the same ParentPipe
     without interfering.
     """
+
     def __init__(self, parent_synthesize_pipe):
         self.name = "ParentPipe"
         self._pipe = parent_synthesize_pipe  # The raw pipe.
@@ -40,9 +42,7 @@ class ParentPipe:
 
         # Worker thread that executes actual .send(), .recv(), .poll() calls.
         self._worker_thread = threading.Thread(
-            target=self._pipe_worker,
-            name=f"{self.name}_Worker",
-            daemon=True
+            target=self._pipe_worker, name=f"{self.name}_Worker", daemon=True
         )
         self._worker_thread.start()
 
@@ -71,14 +71,20 @@ class ParentPipe:
 
                 elif request["type"] == "POLL":
                     timeout = request.get("timeout", 0.0)
-                    logger.debug("[%s] Worker: poll() with timeout: %s", self.name, timeout)
+                    logger.debug(
+                        "[%s] Worker: poll() with timeout: %s", self.name, timeout
+                    )
                     result = self._pipe.poll(timeout)
                     request["result_queue"].put(result)
 
             except (EOFError, BrokenPipeError, OSError) as e:
                 # When the other end has closed or an error occurs,
                 # log and notify the waiting thread.
-                logger.debug("[%s] Worker: pipe closed or error occurred (%s). Shutting down.", self.name, e)
+                logger.debug(
+                    "[%s] Worker: pipe closed or error occurred (%s). Shutting down.",
+                    self.name,
+                    e,
+                )
                 request["result_queue"].put(None)
                 break
 
@@ -102,11 +108,7 @@ class ParentPipe:
             return
         logger.debug("[%s] send() requested with: %s", self.name, data)
         result_queue = queue.Queue()
-        request = {
-            "type": "SEND",
-            "data": data,
-            "result_queue": result_queue
-        }
+        request = {"type": "SEND", "data": data, "result_queue": result_queue}
         self._request_queue.put(request)
         result_queue.get()  # Wait until sending completes.
         logger.debug("[%s] send() completed", self.name)
@@ -120,10 +122,7 @@ class ParentPipe:
             return None
         logger.debug("[%s] recv() requested", self.name)
         result_queue = queue.Queue()
-        request = {
-            "type": "RECV",
-            "result_queue": result_queue
-        }
+        request = {"type": "RECV", "result_queue": result_queue}
         self._request_queue.put(request)
         data = result_queue.get()
 
@@ -144,11 +143,7 @@ class ParentPipe:
             return False
         logger.debug("[%s] poll() requested with timeout: %s", self.name, timeout)
         result_queue = queue.Queue()
-        request = {
-            "type": "POLL",
-            "timeout": timeout,
-            "result_queue": result_queue
-        }
+        request = {"type": "POLL", "timeout": timeout, "result_queue": result_queue}
         self._request_queue.put(request)
         try:
             # Use a slightly longer timeout to give the worker a chance.
@@ -222,7 +217,9 @@ if __name__ == "__main__":
                 else:
                     logger.debug("[sender_thread_%s] no data yet...", n)
             except (OSError, EOFError, BrokenPipeError) as e:
-                logger.debug("[sender_thread_%s] poll/recv exception: %s. Exiting thread.", n, e)
+                logger.debug(
+                    "[sender_thread_%s] poll/recv exception: %s. Exiting thread.", n, e
+                )
                 break
 
             # Allow exit if a shutdown is signaled.

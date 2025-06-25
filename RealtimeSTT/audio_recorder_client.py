@@ -45,20 +45,22 @@ BUFFER_SIZE = 512
 SAMPLE_RATE = 16000
 
 INIT_HANDLE_BUFFER_OVERFLOW = False
-if platform.system() != 'Darwin':
+if platform.system() != "Darwin":
     INIT_HANDLE_BUFFER_OVERFLOW = True
+
 
 # Define ANSI color codes for terminal output
 class bcolors:
-    HEADER = '\033[95m'   # Magenta
-    OKBLUE = '\033[94m'   # Blue
-    OKCYAN = '\033[96m'   # Cyan
-    OKGREEN = '\033[92m'  # Green
-    WARNING = '\033[93m'  # Yellow
-    FAIL = '\033[91m'     # Red
-    ENDC = '\033[0m'      # Reset to default
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+    HEADER = "\033[95m"  # Magenta
+    OKBLUE = "\033[94m"  # Blue
+    OKCYAN = "\033[96m"  # Cyan
+    OKGREEN = "\033[92m"  # Green
+    WARNING = "\033[93m"  # Yellow
+    FAIL = "\033[91m"  # Red
+    ENDC = "\033[0m"  # Reset to default
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+
 
 def format_timestamp_ns(timestamp_ns: int) -> str:
     # Split into whole seconds and the nanosecond remainder
@@ -77,6 +79,7 @@ def format_timestamp_ns(timestamp_ns: int) -> str:
 
     return formatted_timestamp
 
+
 class AudioToTextRecorderClient:
     """
     A class responsible for capturing audio from the microphone, detecting
@@ -84,97 +87,83 @@ class AudioToTextRecorderClient:
     `faster_whisper` model.
     """
 
-    def __init__(self,
-                 model: str = INIT_MODEL_TRANSCRIPTION,
-                 download_root: str = None, 
-                 language: str = "",
-                 compute_type: str = "default",
-                 input_device_index: int = None,
-                 gpu_device_index: Union[int, List[int]] = 0,
-                 device: str = "cuda",
-                 on_recording_start=None,
-                 on_recording_stop=None,
-                 on_transcription_start=None,
-                 ensure_sentence_starting_uppercase=True,
-                 ensure_sentence_ends_with_period=True,
-                 use_microphone=True,
-                 spinner=True,
-                 level=logging.WARNING,
-                 batch_size: int = 16,
-
-                 # Realtime transcription parameters
-                 enable_realtime_transcription=False,
-                 use_main_model_for_realtime=False,
-                 realtime_model_type=INIT_MODEL_TRANSCRIPTION_REALTIME,
-                 realtime_processing_pause=INIT_REALTIME_PROCESSING_PAUSE,
-                 init_realtime_after_seconds=INIT_REALTIME_INITIAL_PAUSE,
-                 on_realtime_transcription_update=None,
-                 on_realtime_transcription_stabilized=None,
-                 realtime_batch_size: int = 16,
-
-                 # Voice activation parameters
-                 silero_sensitivity: float = INIT_SILERO_SENSITIVITY,
-                 silero_use_onnx: bool = False,
-                 silero_deactivity_detection: bool = False,
-                 webrtc_sensitivity: int = INIT_WEBRTC_SENSITIVITY,
-                 post_speech_silence_duration: float = (
-                     INIT_POST_SPEECH_SILENCE_DURATION
-                 ),
-                 min_length_of_recording: float = (
-                     INIT_MIN_LENGTH_OF_RECORDING
-                 ),
-                 min_gap_between_recordings: float = (
-                     INIT_MIN_GAP_BETWEEN_RECORDINGS
-                 ),
-                 pre_recording_buffer_duration: float = (
-                     INIT_PRE_RECORDING_BUFFER_DURATION
-                 ),
-                 on_vad_start=None,
-                 on_vad_stop=None,
-                 on_vad_detect_start=None,
-                 on_vad_detect_stop=None,
-                 on_turn_detection_start=None,
-                 on_turn_detection_stop=None,
-
-                 # Wake word parameters
-                 wakeword_backend: str = "pvporcupine",
-                 openwakeword_model_paths: str = None,
-                 openwakeword_inference_framework: str = "onnx",
-                 wake_words: str = "",
-                 wake_words_sensitivity: float = INIT_WAKE_WORDS_SENSITIVITY,
-                 wake_word_activation_delay: float = (
-                    INIT_WAKE_WORD_ACTIVATION_DELAY
-                 ),
-                 wake_word_timeout: float = INIT_WAKE_WORD_TIMEOUT,
-                 wake_word_buffer_duration: float = INIT_WAKE_WORD_BUFFER_DURATION,
-                 on_wakeword_detected=None,
-                 on_wakeword_timeout=None,
-                 on_wakeword_detection_start=None,
-                 on_wakeword_detection_end=None,
-                 on_recorded_chunk=None,
-                 debug_mode=False,
-                 handle_buffer_overflow: bool = INIT_HANDLE_BUFFER_OVERFLOW,
-                 beam_size: int = 5,
-                 beam_size_realtime: int = 3,
-                 buffer_size: int = BUFFER_SIZE,
-                 sample_rate: int = SAMPLE_RATE,
-                 initial_prompt: Optional[Union[str, Iterable[int]]] = None,
-                 initial_prompt_realtime: Optional[Union[str, Iterable[int]]] = None,
-                 suppress_tokens: Optional[List[int]] = [-1],
-                 print_transcription_time: bool = False,
-                 early_transcription_on_silence: int = 0,
-                 allowed_latency_limit: int = ALLOWED_LATENCY_LIMIT,
-                 no_log_file: bool = False,
-                 use_extended_logging: bool = False,
-
-                 # Server urls
-                 control_url: str = DEFAULT_CONTROL_URL,
-                 data_url: str = DEFAULT_DATA_URL,
-                 autostart_server: bool = True,
-                 output_wav_file: str = None,
-                 faster_whisper_vad_filter: bool = False,
-                 ):
-
+    def __init__(
+        self,
+        model: str = INIT_MODEL_TRANSCRIPTION,
+        download_root: str = None,
+        language: str = "",
+        compute_type: str = "default",
+        input_device_index: int = None,
+        gpu_device_index: Union[int, List[int]] = 0,
+        device: str = "cuda",
+        on_recording_start=None,
+        on_recording_stop=None,
+        on_transcription_start=None,
+        ensure_sentence_starting_uppercase=True,
+        ensure_sentence_ends_with_period=True,
+        use_microphone=True,
+        spinner=True,
+        level=logging.WARNING,
+        batch_size: int = 16,
+        # Realtime transcription parameters
+        enable_realtime_transcription=False,
+        use_main_model_for_realtime=False,
+        realtime_model_type=INIT_MODEL_TRANSCRIPTION_REALTIME,
+        realtime_processing_pause=INIT_REALTIME_PROCESSING_PAUSE,
+        init_realtime_after_seconds=INIT_REALTIME_INITIAL_PAUSE,
+        on_realtime_transcription_update=None,
+        on_realtime_transcription_stabilized=None,
+        realtime_batch_size: int = 16,
+        # Voice activation parameters
+        silero_sensitivity: float = INIT_SILERO_SENSITIVITY,
+        silero_use_onnx: bool = False,
+        silero_deactivity_detection: bool = False,
+        webrtc_sensitivity: int = INIT_WEBRTC_SENSITIVITY,
+        post_speech_silence_duration: float = (INIT_POST_SPEECH_SILENCE_DURATION),
+        min_length_of_recording: float = (INIT_MIN_LENGTH_OF_RECORDING),
+        min_gap_between_recordings: float = (INIT_MIN_GAP_BETWEEN_RECORDINGS),
+        pre_recording_buffer_duration: float = (INIT_PRE_RECORDING_BUFFER_DURATION),
+        on_vad_start=None,
+        on_vad_stop=None,
+        on_vad_detect_start=None,
+        on_vad_detect_stop=None,
+        on_turn_detection_start=None,
+        on_turn_detection_stop=None,
+        # Wake word parameters
+        wakeword_backend: str = "pvporcupine",
+        openwakeword_model_paths: str = None,
+        openwakeword_inference_framework: str = "onnx",
+        wake_words: str = "",
+        wake_words_sensitivity: float = INIT_WAKE_WORDS_SENSITIVITY,
+        wake_word_activation_delay: float = (INIT_WAKE_WORD_ACTIVATION_DELAY),
+        wake_word_timeout: float = INIT_WAKE_WORD_TIMEOUT,
+        wake_word_buffer_duration: float = INIT_WAKE_WORD_BUFFER_DURATION,
+        on_wakeword_detected=None,
+        on_wakeword_timeout=None,
+        on_wakeword_detection_start=None,
+        on_wakeword_detection_end=None,
+        on_recorded_chunk=None,
+        debug_mode=False,
+        handle_buffer_overflow: bool = INIT_HANDLE_BUFFER_OVERFLOW,
+        beam_size: int = 5,
+        beam_size_realtime: int = 3,
+        buffer_size: int = BUFFER_SIZE,
+        sample_rate: int = SAMPLE_RATE,
+        initial_prompt: Optional[Union[str, Iterable[int]]] = None,
+        initial_prompt_realtime: Optional[Union[str, Iterable[int]]] = None,
+        suppress_tokens: Optional[List[int]] = [-1],
+        print_transcription_time: bool = False,
+        early_transcription_on_silence: int = 0,
+        allowed_latency_limit: int = ALLOWED_LATENCY_LIMIT,
+        no_log_file: bool = False,
+        use_extended_logging: bool = False,
+        # Server urls
+        control_url: str = DEFAULT_CONTROL_URL,
+        data_url: str = DEFAULT_DATA_URL,
+        autostart_server: bool = True,
+        output_wav_file: str = None,
+        faster_whisper_vad_filter: bool = False,
+    ):
         # Set instance variables from constructor parameters
         self.model = model
         self.language = language
@@ -283,15 +272,18 @@ class AudioToTextRecorderClient:
         if self.use_microphone:
             self.start_recording()
 
-
         if self.server_already_running:
             if not self.connection_established.wait(timeout=10):
                 print("Server connection not established within 10 seconds.")
             else:
                 self.set_parameter("language", self.language)
                 print(f"Language set to {self.language}")
-                self.set_parameter("wake_word_activation_delay", self.wake_word_activation_delay)
-                print(f"Wake word activation delay set to {self.wake_word_activation_delay}")
+                self.set_parameter(
+                    "wake_word_activation_delay", self.wake_word_activation_delay
+                )
+                print(
+                    f"Wake word activation delay set to {self.wake_word_activation_delay}"
+                )
 
     def text(self, on_transcription_finished=None):
         self.realtime_text = ""
@@ -306,13 +298,15 @@ class AudioToTextRecorderClient:
             wait_interval = 0.02  # Wait in small intervals, e.g., 100ms
             max_wait_time = 60  # Timeout after 60 seconds
 
-            while total_wait_time < max_wait_time and self.is_running and self._recording:
+            while (
+                total_wait_time < max_wait_time and self.is_running and self._recording
+            ):
                 if self.final_text_ready.wait(timeout=wait_interval):
                     break  # Break if transcription is ready
 
                 if not self.is_running or not self._recording:
                     break
-                
+
                 total_wait_time += wait_interval
 
                 # Check if a manual interrupt has occurred
@@ -321,7 +315,9 @@ class AudioToTextRecorderClient:
                         print("Timeout while waiting for text from the server.")
                     self.recording_start.clear()
                     if on_transcription_finished:
-                        threading.Thread(target=on_transcription_finished, args=("",)).start()
+                        threading.Thread(
+                            target=on_transcription_finished, args=("",)
+                        ).start()
                     return ""
 
             self.recording_start.clear()
@@ -330,7 +326,9 @@ class AudioToTextRecorderClient:
                 return ""
 
             if on_transcription_finished:
-                threading.Thread(target=on_transcription_finished, args=(self.final_text,)).start()
+                threading.Thread(
+                    target=on_transcription_finished, args=(self.final_text,)
+                ).start()
 
             return self.final_text
 
@@ -351,14 +349,18 @@ class AudioToTextRecorderClient:
         if audio_meta_data:
             server_sent_to_stt_ns = time.time_ns()
             audio_meta_data["server_sent_to_stt"] = server_sent_to_stt_ns
-            metadata["server_sent_to_stt_formatted"] = format_timestamp_ns(server_sent_to_stt_ns)
+            metadata["server_sent_to_stt_formatted"] = format_timestamp_ns(
+                server_sent_to_stt_ns
+            )
 
             metadata.update(audio_meta_data)
 
         # Convert metadata to JSON and prepare the message
         metadata_json = json.dumps(metadata)
         metadata_length = len(metadata_json)
-        message = struct.pack('<I', metadata_length) + metadata_json.encode('utf-8') + chunk
+        message = (
+            struct.pack("<I", metadata_length) + metadata_json.encode("utf-8") + chunk
+        )
 
         # Send the message if the connection is running
         if self.is_running:
@@ -392,22 +394,28 @@ class AudioToTextRecorderClient:
 
         try:
             # Connect to control WebSocket
-            self.control_ws = WebSocketApp(self.control_url,
-                                                     on_message=self.on_control_message,
-                                                     on_error=self.on_error,
-                                                     on_close=self.on_close,
-                                                     on_open=self.on_control_open)
+            self.control_ws = WebSocketApp(
+                self.control_url,
+                on_message=self.on_control_message,
+                on_error=self.on_error,
+                on_close=self.on_close,
+                on_open=self.on_control_open,
+            )
 
-            self.control_ws_thread = threading.Thread(target=self.control_ws.run_forever)
+            self.control_ws_thread = threading.Thread(
+                target=self.control_ws.run_forever
+            )
             self.control_ws_thread.daemon = False
             self.control_ws_thread.start()
 
             # Connect to data WebSocket
-            self.data_ws = WebSocketApp(self.data_url,
-                                                  on_message=self.on_data_message,
-                                                  on_error=self.on_error,
-                                                  on_close=self.on_close,
-                                                  on_open=self.on_data_open)
+            self.data_ws = WebSocketApp(
+                self.data_url,
+                on_message=self.on_data_message,
+                on_error=self.on_error,
+                on_close=self.on_close,
+                on_open=self.on_data_open,
+            )
 
             self.data_ws_thread = threading.Thread(target=self.data_ws.run_forever)
             self.data_ws_thread.daemon = False
@@ -426,24 +434,27 @@ class AudioToTextRecorderClient:
             return False
 
     def start_server(self):
-        args = ['stt-server']
+        args = ["stt-server"]
 
         # Map constructor parameters to server arguments
         if self.model:
-            args += ['--model', self.model]
+            args += ["--model", self.model]
         if self.realtime_model_type:
-            args += ['--realtime_model_type', self.realtime_model_type]
+            args += ["--realtime_model_type", self.realtime_model_type]
         if self.download_root:
-            args += ['--root', self.download_root]
+            args += ["--root", self.download_root]
         if self.batch_size is not None:
-            args += ['--batch', str(self.batch_size)]
+            args += ["--batch", str(self.batch_size)]
         if self.realtime_batch_size is not None:
-            args += ['--realtime_batch_size', str(self.realtime_batch_size)]
+            args += ["--realtime_batch_size", str(self.realtime_batch_size)]
         if self.init_realtime_after_seconds is not None:
-            args += ['--init_realtime_after_seconds', str(self.init_realtime_after_seconds)]
+            args += [
+                "--init_realtime_after_seconds",
+                str(self.init_realtime_after_seconds),
+            ]
         if self.initial_prompt_realtime:
             sanitized_prompt = self.initial_prompt_realtime.replace("\n", "\\n")
-            args += ['--initial_prompt_realtime', sanitized_prompt]
+            args += ["--initial_prompt_realtime", sanitized_prompt]
 
         # if self.compute_type:
         #     args += ['--compute_type', self.compute_type]
@@ -468,77 +479,98 @@ class AudioToTextRecorderClient:
         # if self.no_log_file:
         #     args.append('--no_log_file')  # flag, no need for True
         if self.debug_mode:
-            args.append('--debug')  # flag, no need for True/False
-            
+            args.append("--debug")  # flag, no need for True/False
+
         if self.language:
-            args += ['--language', self.language]
+            args += ["--language", self.language]
         if self.silero_sensitivity is not None:
-            args += ['--silero_sensitivity', str(self.silero_sensitivity)]
+            args += ["--silero_sensitivity", str(self.silero_sensitivity)]
         if self.silero_use_onnx:
-            args.append('--silero_use_onnx')  # flag, no need for True/False
+            args.append("--silero_use_onnx")  # flag, no need for True/False
         if self.webrtc_sensitivity is not None:
-            args += ['--webrtc_sensitivity', str(self.webrtc_sensitivity)]
+            args += ["--webrtc_sensitivity", str(self.webrtc_sensitivity)]
         if self.min_length_of_recording is not None:
-            args += ['--min_length_of_recording', str(self.min_length_of_recording)]
+            args += ["--min_length_of_recording", str(self.min_length_of_recording)]
         if self.min_gap_between_recordings is not None:
-            args += ['--min_gap_between_recordings', str(self.min_gap_between_recordings)]
+            args += [
+                "--min_gap_between_recordings",
+                str(self.min_gap_between_recordings),
+            ]
         if self.realtime_processing_pause is not None:
-            args += ['--realtime_processing_pause', str(self.realtime_processing_pause)]
+            args += ["--realtime_processing_pause", str(self.realtime_processing_pause)]
         if self.early_transcription_on_silence is not None:
-            args += ['--early_transcription_on_silence', str(self.early_transcription_on_silence)]
+            args += [
+                "--early_transcription_on_silence",
+                str(self.early_transcription_on_silence),
+            ]
         if self.silero_deactivity_detection:
-            args.append('--silero_deactivity_detection')  # flag, no need for True/False
+            args.append("--silero_deactivity_detection")  # flag, no need for True/False
         if self.beam_size is not None:
-            args += ['--beam_size', str(self.beam_size)]
+            args += ["--beam_size", str(self.beam_size)]
         if self.beam_size_realtime is not None:
-            args += ['--beam_size_realtime', str(self.beam_size_realtime)]
+            args += ["--beam_size_realtime", str(self.beam_size_realtime)]
         if self.wake_words is not None:
-            args += ['--wake_words', str(self.wake_words)]
+            args += ["--wake_words", str(self.wake_words)]
         if self.wake_words_sensitivity is not None:
-            args += ['--wake_words_sensitivity', str(self.wake_words_sensitivity)]
+            args += ["--wake_words_sensitivity", str(self.wake_words_sensitivity)]
         if self.wake_word_timeout is not None:
-            args += ['--wake_word_timeout', str(self.wake_word_timeout)]
+            args += ["--wake_word_timeout", str(self.wake_word_timeout)]
         if self.wake_word_activation_delay is not None:
-            args += ['--wake_word_activation_delay', str(self.wake_word_activation_delay)]
+            args += [
+                "--wake_word_activation_delay",
+                str(self.wake_word_activation_delay),
+            ]
         if self.wakeword_backend is not None:
-            args += ['--wakeword_backend', str(self.wakeword_backend)]
+            args += ["--wakeword_backend", str(self.wakeword_backend)]
         if self.openwakeword_model_paths:
-            args += ['--openwakeword_model_paths', str(self.openwakeword_model_paths)]
+            args += ["--openwakeword_model_paths", str(self.openwakeword_model_paths)]
         if self.openwakeword_inference_framework is not None:
-            args += ['--openwakeword_inference_framework', str(self.openwakeword_inference_framework)]
+            args += [
+                "--openwakeword_inference_framework",
+                str(self.openwakeword_inference_framework),
+            ]
         if self.wake_word_buffer_duration is not None:
-            args += ['--wake_word_buffer_duration', str(self.wake_word_buffer_duration)]
+            args += ["--wake_word_buffer_duration", str(self.wake_word_buffer_duration)]
         if self.use_main_model_for_realtime:
-            args.append('--use_main_model_for_realtime')  # flag, no need for True/False
+            args.append("--use_main_model_for_realtime")  # flag, no need for True/False
         if self.use_extended_logging:
-            args.append('--use_extended_logging')  # flag, no need for True/False
+            args.append("--use_extended_logging")  # flag, no need for True/False
 
         if self.control_url:
             parsed_control_url = urlparse(self.control_url)
             if parsed_control_url.port:
-                args += ['--control_port', str(parsed_control_url.port)]
+                args += ["--control_port", str(parsed_control_url.port)]
         if self.data_url:
             parsed_data_url = urlparse(self.data_url)
             if parsed_data_url.port:
-                args += ['--data_port', str(parsed_data_url.port)]
+                args += ["--data_port", str(parsed_data_url.port)]
         if self.initial_prompt:
             sanitized_prompt = self.initial_prompt.replace("\n", "\\n")
-            args += ['--initial_prompt', sanitized_prompt]
+            args += ["--initial_prompt", sanitized_prompt]
 
         # Start the subprocess with the mapped arguments
-        if os.name == 'nt':  # Windows
-            cmd = 'start /min cmd /c ' + subprocess.list2cmdline(args)
+        if os.name == "nt":  # Windows
+            cmd = "start /min cmd /c " + subprocess.list2cmdline(args)
             if debug_mode:
                 print(f"Opening server with cli command: {cmd}")
             subprocess.Popen(cmd, shell=True)
         else:  # Unix-like systems
-            subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-        print("STT server start command issued. Please wait a moment for it to initialize.", file=sys.stderr)
+            subprocess.Popen(
+                args,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+        print(
+            "STT server start command issued. Please wait a moment for it to initialize.",
+            file=sys.stderr,
+        )
 
     def is_server_running(self):
         try:
             # Attempt a proper WebSocket handshake to the control URL.
             from websocket import create_connection
+
             ws = create_connection(self.control_url, timeout=3)
             ws.close()
             return True
@@ -565,14 +597,16 @@ class AudioToTextRecorderClient:
                 print("Failed to start STT server.", file=sys.stderr)
                 return False
             else:
-                print("STT server is required. Please start it manually.", file=sys.stderr)
+                print(
+                    "STT server is required. Please start it manually.", file=sys.stderr
+                )
                 return False
-        
+
         else:
             self.server_already_running = True
 
         return True
-    
+
     def list_devices(self):
         """List all available audio input devices."""
         audio = AudioInput(debug_mode=self.debug_mode)
@@ -586,8 +620,7 @@ class AudioToTextRecorderClient:
     def setup_audio(self):
         """Initialize audio input"""
         self.audio_input = AudioInput(
-            input_device_index=self.input_device_index,
-            debug_mode=self.debug_mode
+            input_device_index=self.input_device_index, debug_mode=self.debug_mode
         )
         return self.audio_input.setup()
 
@@ -601,11 +634,12 @@ class AudioToTextRecorderClient:
 
             # Initialize WAV file writer if output_wav_file is provided
             if self.output_wav_file and not self.wav_file:
-                self.wav_file = wave.open(self.output_wav_file, 'wb')
+                self.wav_file = wave.open(self.output_wav_file, "wb")
                 self.wav_file.setnchannels(1)
                 self.wav_file.setsampwidth(2)
-                self.wav_file.setframerate(self.audio_input.device_sample_rate)  # Use self.device_sample_rate
-
+                self.wav_file.setframerate(
+                    self.audio_input.device_sample_rate
+                )  # Use self.device_sample_rate
 
             if self.debug_mode:
                 print("Recording and sending audio...")
@@ -631,11 +665,15 @@ class AudioToTextRecorderClient:
                         metadata = {"sampleRate": self.audio_input.device_sample_rate}
                         metadata_json = json.dumps(metadata)
                         metadata_length = len(metadata_json)
-                        message = struct.pack('<I', metadata_length) + metadata_json.encode('utf-8') + audio_data
+                        message = (
+                            struct.pack("<I", metadata_length)
+                            + metadata_json.encode("utf-8")
+                            + audio_data
+                        )
 
                         if self.is_running:
                             if log_outgoing_chunks:
-                                print(".", flush=True, end='')
+                                print(".", flush=True, end="")
                             self.data_ws.send(message, opcode=ABNF.OPCODE_BINARY)
                 except KeyboardInterrupt:
                     if self.debug_mode:
@@ -649,29 +687,34 @@ class AudioToTextRecorderClient:
             print(f"Error in record_and_send_audio: {e}", file=sys.stderr)
         finally:
             self.cleanup_audio()
-            self.final_text_ready.set() # fake final text to stop the text() method
+            self.final_text_ready.set()  # fake final text to stop the text() method
             self.is_running = False
             self._recording = False
 
     def cleanup_audio(self):
         """Clean up audio resources"""
-        if hasattr(self, 'audio_input'):
+        if hasattr(self, "audio_input"):
             self.audio_input.cleanup()
 
     def on_control_message(self, ws, message):
         try:
             data = json.loads(message)
             # Handle server response with status
-            if 'status' in data:
-                if data['status'] == 'success':
-                    if 'parameter' in data and 'value' in data:
-                        request_id = data.get('request_id')
-                        if request_id is not None and request_id in self.pending_requests:
+            if "status" in data:
+                if data["status"] == "success":
+                    if "parameter" in data and "value" in data:
+                        request_id = data.get("request_id")
+                        if (
+                            request_id is not None
+                            and request_id in self.pending_requests
+                        ):
                             if self.debug_mode:
-                                print(f"Parameter {data['parameter']} = {data['value']}")
-                            self.pending_requests[request_id]['value'] = data['value']
-                            self.pending_requests[request_id]['event'].set()
-                elif data['status'] == 'error':
+                                print(
+                                    f"Parameter {data['parameter']} = {data['value']}"
+                                )
+                            self.pending_requests[request_id]["value"] = data["value"]
+                            self.pending_requests[request_id]["event"].set()
+                elif data["status"] == "error":
                     print(f"Server Error: {data.get('message', '')}")
             else:
                 print(f"Unknown control message format: {data}")
@@ -685,33 +728,33 @@ class AudioToTextRecorderClient:
         try:
             data = json.loads(message)
             # Handle real-time transcription updates
-            if data.get('type') == 'realtime':
-                if data['text'] != self.realtime_text:
-                    self.realtime_text = data['text']
+            if data.get("type") == "realtime":
+                if data["text"] != self.realtime_text:
+                    self.realtime_text = data["text"]
 
-                    timestamp = datetime.now().strftime('%H:%M:%S.%f')[:-3]
+                    timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
                     # print(f"Realtime text [{timestamp}]: {bcolors.OKCYAN}{self.realtime_text}{bcolors.ENDC}")
 
                     if self.on_realtime_transcription_update:
                         # Call the callback in a new thread to avoid blocking
                         threading.Thread(
                             target=self.on_realtime_transcription_update,
-                            args=(self.realtime_text,)
+                            args=(self.realtime_text,),
                         ).start()
 
             # Handle full sentences
-            elif data.get('type') == 'fullSentence':
-                self.final_text = data['text']
+            elif data.get("type") == "fullSentence":
+                self.final_text = data["text"]
                 self.final_text_ready.set()
 
-            elif data.get('type') == 'recording_start':
+            elif data.get("type") == "recording_start":
                 if self.on_recording_start:
                     self.on_recording_start()
-            elif data.get('type') == 'recording_stop':
+            elif data.get("type") == "recording_stop":
                 if self.on_recording_stop:
                     self.on_recording_stop()
-            elif data.get('type') == 'transcription_start':
-                audio_bytes_base64 = data.get('audio_bytes_base64')
+            elif data.get("type") == "transcription_start":
+                audio_bytes_base64 = data.get("audio_bytes_base64")
                 decoded_bytes = base64.b64decode(audio_bytes_base64)
 
                 # Reconstruct the np.int16 array from the decoded bytes
@@ -723,34 +766,34 @@ class AudioToTextRecorderClient:
 
                 if self.on_transcription_start:
                     self.on_transcription_start(normalized_audio)
-            elif data.get('type') == 'vad_detect_start':
+            elif data.get("type") == "vad_detect_start":
                 if self.on_vad_detect_start:
                     self.on_vad_detect_start()
-            elif data.get('type') == 'vad_detect_stop':
+            elif data.get("type") == "vad_detect_stop":
                 if self.on_vad_detect_stop:
                     self.on_vad_detect_stop()
-            elif data.get('type') == 'vad_start':
+            elif data.get("type") == "vad_start":
                 if self.on_vad_start:
                     self.on_vad_start()
-            elif data.get('type') == 'vad_stop':
+            elif data.get("type") == "vad_stop":
                 if self.on_vad_stop:
                     self.on_vad_stop()
-            elif data.get('type') == 'start_turn_detection':
+            elif data.get("type") == "start_turn_detection":
                 if self.on_turn_detection_start:
                     self.on_turn_detection_start()
-            elif data.get('type') == 'stop_turn_detection':
+            elif data.get("type") == "stop_turn_detection":
                 if self.on_turn_detection_stop:
                     self.on_turn_detection_stop()
-            elif data.get('type') == 'wakeword_detected':
+            elif data.get("type") == "wakeword_detected":
                 if self.on_wakeword_detected:
                     self.on_wakeword_detected()
-            elif data.get('type') == 'wakeword_detection_start':
+            elif data.get("type") == "wakeword_detection_start":
                 if self.on_wakeword_detection_start:
                     self.on_wakeword_detection_start()
-            elif data.get('type') == 'wakeword_detection_end':
+            elif data.get("type") == "wakeword_detection_end":
                 if self.on_wakeword_detection_end:
                     self.on_wakeword_detection_end()
-            elif data.get('type') == 'recorded_chunk':
+            elif data.get("type") == "recorded_chunk":
                 pass
 
             else:
@@ -767,10 +810,14 @@ class AudioToTextRecorderClient:
     def on_close(self, ws, close_status_code, close_msg):
         if self.debug_mode:
             if ws == self.data_ws:
-                print(f"Data WebSocket connection closed: {close_status_code} - {close_msg}")
+                print(
+                    f"Data WebSocket connection closed: {close_status_code} - {close_msg}"
+                )
             elif ws == self.control_ws:
-                print(f"Control WebSocket connection closed: {close_status_code} - {close_msg}")
-        
+                print(
+                    f"Control WebSocket connection closed: {close_status_code} - {close_msg}"
+                )
+
         self.is_running = False
 
     def on_control_open(self, ws):
@@ -783,11 +830,7 @@ class AudioToTextRecorderClient:
             print("Data WebSocket connection opened.")
 
     def set_parameter(self, parameter, value):
-        command = {
-            "command": "set_parameter",
-            "parameter": parameter,
-            "value": value
-        }
+        command = {"command": "set_parameter", "parameter": parameter, "value": value}
         self.control_ws.send(json.dumps(command))
 
     def get_parameter(self, parameter):
@@ -799,19 +842,19 @@ class AudioToTextRecorderClient:
         command = {
             "command": "get_parameter",
             "parameter": parameter,
-            "request_id": request_id
+            "request_id": request_id,
         }
 
         # Create an event to wait for the response
         event = threading.Event()
-        self.pending_requests[request_id] = {'event': event, 'value': None}
+        self.pending_requests[request_id] = {"event": event, "value": None}
 
         # Send the command to the server
         self.control_ws.send(json.dumps(command))
 
         # Wait for the response or timeout after 5 seconds
         if event.wait(timeout=5):
-            value = self.pending_requests[request_id]['value']
+            value = self.pending_requests[request_id]["value"]
             # Clean up the pending request
             del self.pending_requests[request_id]
             return value
@@ -826,7 +869,7 @@ class AudioToTextRecorderClient:
             "command": "call_method",
             "method": method,
             "args": args or [],
-            "kwargs": kwargs or {}
+            "kwargs": kwargs or {},
         }
         self.control_ws.send(json.dumps(command))
 
