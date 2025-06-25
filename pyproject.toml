@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "realtimestt-mac"
-version = "0.3.104"
+version = "0.1.0"
 description = "A fast Voice Activity Detection and Transcription System with Apple Silicon support"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
     {name = "Kolja Beigel", email = "kolja.beigel@web.de"},
-    {name = "Tom Whiting", email = "tom@tomwhiting.com"},
+    {name = "Tom Whiting", email = "tom.whiting@reachsocialsupports.com.au"},
 ]
 keywords = [
     "real-time", "audio", "transcription", "speech-to-text",
@@ -37,8 +37,6 @@ dependencies = [
     "torchaudio",
     "scipy==1.15.2",
     "openwakeword>=0.4.0",
-    "websockets==15.0.1",
-    "websocket-client==1.8.0",
     "soundfile==0.13.1",
 ]
 
@@ -52,10 +50,6 @@ ctranslate2 = [
 Homepage = "https://github.com/tomWhiting/RealtimeSTT-mac"
 Repository = "https://github.com/tomWhiting/RealtimeSTT-mac"
 Issues = "https://github.com/tomWhiting/RealtimeSTT-mac/issues"
-
-[project.scripts]
-stt-server = "RealtimeSTT_server.stt_server:main"
-stt = "RealtimeSTT_server.stt_cli_client:main"
 
 [tool.setuptools.packages.find]
 include = ["RealtimeSTT*"]
