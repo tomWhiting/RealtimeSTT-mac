@@ -1,19 +1,15 @@
 import setuptools
 import os
 
-# Get the absolute path of requirements.txt
-req_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
-
-# Read requirements.txt safely
-with open(req_path, "r", encoding="utf-8") as f:
-    requirements = f.read().splitlines()
+# Dependencies are now handled by pyproject.toml
+requirements = []
 
 # Read README.md
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="realtimestt",
+    name="realtimestt-mac",
     version="0.3.104",
     author="Kolja Beigel",
     author_email="kolja.beigel@web.de",
@@ -29,8 +25,11 @@ setuptools.setup(
     python_requires='>=3.6',
     license='MIT',
     install_requires=requirements,
-    keywords="real-time, audio, transcription, speech-to-text, voice-activity-detection, VAD, real-time-transcription, ambient-noise-detection, microphone-input, faster_whisper, speech-recognition, voice-assistants, audio-processing, buffered-transcription, pyaudio, ambient-noise-level, voice-deactivity",
-    package_data={"RealtimeSTT": ["warmup_audio.wav"]},
+    keywords="real-time, audio, transcription, speech-to-text, voice-activity-detection, VAD, real-time-transcription, ambient-noise-detection, microphone-input, faster_whisper, speech-recognition, voice-assistants, audio-processing, buffered-transcription, pyaudio, ambient-noise-level, voice-deactivity, apple-silicon",
+    package_data={
+        "RealtimeSTT": ["warmup_audio.wav"],
+        "": ["wheels/*.whl"]
+    },
     include_package_data=True,
     entry_points={
         'console_scripts': [

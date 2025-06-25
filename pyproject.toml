@@ -13,7 +13,7 @@ authors = [
     {name = "Tom Whiting", email = "tom@tomwhiting.com"},
 ]
 keywords = [
-    "real-time", "audio", "transcription", "speech-to-text", 
+    "real-time", "audio", "transcription", "speech-to-text",
     "voice-activity-detection", "VAD", "real-time-transcription",
     "ambient-noise-detection", "microphone-input", "faster_whisper",
     "speech-recognition", "voice-assistants", "audio-processing",
@@ -29,6 +29,7 @@ requires-python = ">=3.8"
 dependencies = [
     "PyAudio==0.2.14",
     "faster-whisper==1.1.1",
+    "ctranslate2",
     "pvporcupine>=3.0.0",
     "webrtcvad-wheels==2.0.14",
     "halo==0.0.31",
@@ -39,6 +40,12 @@ dependencies = [
     "websockets==15.0.1",
     "websocket-client==1.8.0",
     "soundfile==0.13.1",
+]
+
+[tool.uv.sources]
+ctranslate2 = [
+    { path = "./wheels/ctranslate2-4.6.0+accelerate-cp311-cp311-macosx_15_0_arm64.whl", marker = "python_version < '3.12'" },
+    { path = "./wheels/ctranslate2-4.6.0+accelerate-cp312-cp312-macosx_15_0_arm64.whl", marker = "python_version >= '3.12'" },
 ]
 
 [project.urls]
@@ -55,6 +62,7 @@ include = ["RealtimeSTT*"]
 
 [tool.setuptools.package-data]
 RealtimeSTT = ["warmup_audio.wav"]
+"*" = ["wheels/*.whl"]
 
 [tool.uv]
 dev-dependencies = [
