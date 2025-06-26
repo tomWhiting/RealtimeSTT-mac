@@ -9,6 +9,7 @@ env_realtimestt/
 example_rvc/assets/
 RealtimeSTT.code-workspace
 check_versions.py
+STYLE_GUIDE.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
