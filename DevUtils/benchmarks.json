@@ -118,5 +118,103 @@
       "transcription_accuracy": 97.5,
       "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in Rust has begun. Aware that this venture may never truly launch, the promise of optimization comes with both a blessing and a curse. The investors will have to wait."
     }
+  },
+  "large-v2": {
+    "fp16": {
+      "load_time_ms": 4744.2,
+      "transcription_time_ms": 83626.6,
+      "transcription_accuracy": 97.5,
+      "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. Aware that this venture may never truly launch, the promise of optimization comes with both a blessing and a curse. The investors will have to wait."
+    },
+    "fp32": {
+      "load_time_ms": 3432.6,
+      "transcription_time_ms": 38595.5,
+      "transcription_accuracy": 97.5,
+      "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. Aware that this venture may never truly launch, the promise of optimization comes with both a blessing and a curse. The investors will have to wait."
+    }
+  },
+  "large-v3": {
+    "fp16": {
+      "load_time_ms": 2635.3,
+      "transcription_time_ms": 34041.4,
+      "transcription_accuracy": 100.0,
+      "transcription_text": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in Rust has begun. Aware that this venture may never truly launch, the promise of optimisation comes with both a blessing and a curse. The investors will have to wait."
+    },
+    "fp32": {
+      "load_time_ms": 2646.6,
+      "transcription_time_ms": 39332.8,
+      "transcription_accuracy": 100.0,
+      "transcription_text": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in Rust has begun. Aware that this venture may never truly launch, the promise of optimisation comes with both a blessing and a curse. The investors will have to wait."
+    }
+  },
+  "distil-large-v2": {
+    "fp16": {
+      "load_time_ms": 1656.1,
+      "transcription_time_ms": 10445.0,
+      "transcription_accuracy": 76.7,
+      "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trade they are born with. Purched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. the"
+    },
+    "fp32": {
+      "load_time_ms": 1122.5,
+      "transcription_time_ms": 10168.3,
+      "transcription_accuracy": 76.7,
+      "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trade they are born with. Purched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. the"
+    }
+  },
+  "distil-medium.en": {
+    "fp16": {
+      "load_time_ms": 798.8,
+      "transcription_time_ms": 6443.1,
+      "transcription_accuracy": 78.8,
+      "transcription_text": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection, is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun."
+    },
+    "fp32": {
+      "load_time_ms": 632.6,
+      "transcription_time_ms": 6347.5,
+      "transcription_accuracy": 78.8,
+      "transcription_text": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection, is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun."
+    }
+  },
+  "distil-small.en": {
+    "fp16": {
+      "load_time_ms": 497.2,
+      "transcription_time_ms": 8896.9,
+      "transcription_accuracy": 76.7,
+      "transcription_text": "The reproducing members of the species are able to prioritize effectively distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. A"
+    },
+    "fp32": {
+      "load_time_ms": 287.4,
+      "transcription_time_ms": 13478.4,
+      "transcription_accuracy": 76.7,
+      "transcription_text": "The reproducing members of the species are able to prioritize effectively distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. A"
+    }
+  },
+  "distil-large-v3": {
+    "fp16": {
+      "load_time_ms": 1473.6,
+      "transcription_time_ms": 10130.0,
+      "transcription_accuracy": 97.5,
+      "transcription_text": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection is not a trait they are born with. Purched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. Aware that this venture may never truly launch, The promise of optimization comes with both a blessing and a curse. The investors will have to wait."
+    },
+    "fp32": {
+      "load_time_ms": 1311.9,
+      "transcription_time_ms": 10269.9,
+      "transcription_accuracy": 97.5,
+      "transcription_text": "Though reproducing members of the species are able to prioritise effectively, distinguishing between productivity and perfection is not a trait they are born with. Purched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in rust has begun. Aware that this venture may never truly launch, The promise of optimization comes with both a blessing and a curse. The investors will have to wait."
+    }
+  },
+  "distil-large-v3.5": {
+    "fp16": {
+      "load_time_ms": 2854.6,
+      "transcription_time_ms": 9451.6,
+      "transcription_accuracy": 96.2,
+      "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in Rust has begun. Aware that this venture may never truly launch, of optimization comes with both a blessing and a curse. The investors will have to wait."
+    },
+    "fp32": {
+      "load_time_ms": 1245.7,
+      "transcription_time_ms": 9311.4,
+      "transcription_accuracy": 96.2,
+      "transcription_text": "Though reproducing members of the species are able to prioritize effectively, distinguishing between productivity and perfection is not a trait they are born with. Perched before his array of monitors, the bright elusive lure of speed and type safety has proven too tempting for this aspiring oligarch. The rewrite in Rust has begun. Aware that this venture may never truly launch, of optimization comes with both a blessing and a curse. The investors will have to wait."
+    }
   }
 }
