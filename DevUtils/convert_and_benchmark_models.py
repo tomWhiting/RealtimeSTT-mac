@@ -38,6 +38,9 @@ import argparse
 import subprocess
 import tempfile
 import shutil
+import threading
+import concurrent.futures
+import gc
 from pathlib import Path
 from typing import Dict, Any, Optional, Tuple
 import logging
@@ -88,6 +91,12 @@ class ModelConverter:
         self.hf_api = HfApi(token=hf_token)
         self.work_dir = Path("./model_conversion_workspace")
         self.work_dir.mkdir(exist_ok=True)
+        
+        # Performance optimizations
+        self.download_cache = {}  # Cache for downloaded models
+        self.upload_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="upload")
+        self.download_executor = concurrent.futures.ThreadPoolExecutor(max_workers=2, thread_name_prefix="download")
+        self.background_tasks = []  # Track background operations
 
         # Load model selection configuration
         models_file = Path(__file__).parent / "model_selection.json"
@@ -136,8 +145,53 @@ class ModelConverter:
         self.expected_text = active_sample["expected_transcript"].strip()
         self.benchmark_metadata = active_sample["metadata"]
 
-        self.model_registry = {}
-        self.benchmarks = {}
+        # Load existing progress to enable resuming
+        self.load_existing_progress()
+
+        # Initialize storage for results (will merge with existing)
+        if not hasattr(self, 'model_registry'):
+            self.model_registry = {}
+        if not hasattr(self, 'benchmarks'):
+            self.benchmarks = {}
+
+    def load_existing_progress(self):
+        """Load existing model registry and benchmarks to enable resuming"""
+        # Load existing model registry
+        registry_file = Path(__file__).parent.parent / "model_registry.json"
+        if registry_file.exists():
+            try:
+                with open(registry_file, 'r') as f:
+                    self.model_registry = json.load(f)
+                logger.info(f"📂 Loaded existing model registry with {len(self.model_registry)} models")
+            except Exception as e:
+                logger.warning(f"⚠️ Could not load existing model registry: {e}")
+                self.model_registry = {}
+        else:
+            self.model_registry = {}
+            
+        # Load existing benchmarks
+        benchmarks_file = Path(__file__).parent / "benchmarks.json"
+        if benchmarks_file.exists():
+            try:
+                with open(benchmarks_file, 'r') as f:
+                    self.benchmarks = json.load(f)
+                logger.info(f"📂 Loaded existing benchmarks with {len(self.benchmarks)} models")
+            except Exception as e:
+                logger.warning(f"⚠️ Could not load existing benchmarks: {e}")
+                self.benchmarks = {}
+        else:
+            self.benchmarks = {}
+
+    def is_model_complete(self, model_name: str) -> bool:
+        """Check if model has already been fully processed"""
+        # Check if model exists in both registry and benchmarks with both fp16 and fp32
+        in_registry = (model_name in self.model_registry and 
+                      "fp16" in self.model_registry[model_name] and 
+                      "fp32" in self.model_registry[model_name])
+        in_benchmarks = (model_name in self.benchmarks and 
+                        "fp16" in self.benchmarks[model_name] and 
+                        "fp32" in self.benchmarks[model_name])
+        return in_registry and in_benchmarks
 
     def get_faster_whisper_repo(self, model_name: str) -> str:
         """Get the corresponding Systran faster-whisper repo for a model"""
@@ -282,6 +336,76 @@ class ModelConverter:
         except Exception as e:
             logger.error(f"Failed to download {faster_repo}: {e}")
             raise
+
+    def download_model_cached(self, model_name: str, repo: str, model_type: str = "original") -> str:
+        """Download model with caching to avoid re-downloads"""
+        # Use model_name for systran models to avoid cache conflicts
+        if model_type == "systran":
+            cache_key = f"systran_{model_name}"
+        else:
+            cache_key = f"{repo}_{model_type}"
+        
+        if cache_key in self.download_cache:
+            cached_path = self.download_cache[cache_key]
+            if Path(cached_path).exists():
+                logger.info(f"♻️ Using cached {model_type} model for {model_name}: {cached_path}")
+                return cached_path
+            else:
+                # Clean up stale cache entry
+                del self.download_cache[cache_key]
+        
+        # Download the model
+        if model_type == "original":
+            path = self.download_original_model(model_name, repo)
+        elif model_type == "systran":
+            path = self.download_faster_whisper_model(model_name)
+        else:
+            raise ValueError(f"Unknown model_type: {model_type}")
+            
+        # Cache the result
+        self.download_cache[cache_key] = path
+        logger.info(f"💾 Cached {model_type} model for {model_name}")
+        return path
+
+    def background_download_next_model(self, next_model_name: str, next_repo: str) -> concurrent.futures.Future:
+        """Start downloading next model in background"""
+        logger.info(f"🔄 Starting background download of next model: {next_model_name}")
+        
+        def download_both():
+            try:
+                # Download both original and systran models for next iteration
+                original_future = self.download_executor.submit(
+                    self.download_model_cached, next_model_name, next_repo, "original"
+                )
+                systran_future = self.download_executor.submit(
+                    self.download_model_cached, next_model_name, "", "systran"
+                )
+                return {
+                    "original": original_future.result(),
+                    "systran": systran_future.result()
+                }
+            except Exception as e:
+                logger.warning(f"Background download failed for {next_model_name}: {e}")
+                return None
+                
+        return self.download_executor.submit(download_both)
+
+    def background_upload_model(self, fp32_path: str, upload_repo_name: str, readme_content: str) -> concurrent.futures.Future:
+        """Upload model in background"""
+        logger.info(f"📤 Starting background upload: {upload_repo_name}")
+        return self.upload_executor.submit(self.upload_model, fp32_path, upload_repo_name, readme_content)
+
+    def force_memory_cleanup(self):
+        """Aggressive memory cleanup between models"""
+        import gc
+        gc.collect()  # Force garbage collection
+        # Clear any model caches in transformers/faster-whisper if they exist
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except:
+            pass
 
     def convert_to_fp32(self, original_path: str, model_name: str) -> str:
         """Convert Transformers model to FP32 CTranslate2 format using ct2-transformers-converter"""
@@ -678,6 +802,127 @@ inference: true
 
         return model_results
 
+    def process_model_optimized(self, model_name: str, original_repo: str, next_download_future: concurrent.futures.Future = None) -> Dict[str, ModelInfo]:
+        """Optimized version of process_model with caching and background operations"""
+        logger.info(f"\n{'='*60}")
+        logger.info(f"🚀 Processing model (optimized): {model_name}")
+        logger.info(f"{'='*60}")
+
+        model_results = {}
+
+        try:
+            # Use cached download for original model
+            original_path = self.download_model_cached(model_name, original_repo, "original")
+
+            # Convert to FP32 CTranslate2 format directly
+            try:
+                fp32_path = self.convert_to_fp32(original_path, model_name)
+                logger.info(f"✅ Successfully converted {model_name} to FP32")
+            except Exception as conversion_error:
+                logger.error(f"❌ Conversion failed for {model_name}: {conversion_error}")
+                raise conversion_error
+
+            # Clean up original downloaded model after conversion
+            logger.info(f"🧹 Cleaning up original downloaded model for {model_name}")
+            import shutil
+            if Path(original_path).exists():
+                shutil.rmtree(original_path, ignore_errors=True)
+                logger.info(f"🗑️ Deleted original model files: {original_path}")
+
+            # Use cached download for Systran faster-whisper model
+            try:
+                systran_path = self.download_model_cached(model_name, "", "systran")
+                logger.info(f"✅ Successfully downloaded Systran model for {model_name}")
+                
+                # Benchmark Systran FP16 model
+                systran_benchmark = self.benchmark_model(systran_path, "fp16")
+                systran_repo = self.get_faster_whisper_repo(model_name)
+                systran_info = ModelInfo(
+                    name=model_name,
+                    precision="fp16",
+                    repo=systran_repo,
+                    size_mb=systran_benchmark.model_size_mb,
+                    readme_url=f"https://huggingface.co/{systran_repo}/blob/main/README.md",
+                    benchmarks=systran_benchmark
+                )
+                model_results["fp16"] = systran_info
+                
+                # Clean up Systran model after benchmarking
+                if Path(systran_path).exists():
+                    shutil.rmtree(systran_path, ignore_errors=True)
+                    logger.info(f"🗑️ Deleted Systran model files: {systran_path}")
+                    
+            except Exception as systran_error:
+                logger.warning(f"⚠️ Systran model download/benchmark failed for {model_name}: {systran_error}")
+
+            # Benchmark FP32 model
+            fp32_benchmark = self.benchmark_model(fp32_path, "fp32")
+
+            # Generate README
+            fp32_info_for_readme = ModelInfo(model_name, "fp32", "",
+                                            fp32_benchmark.model_size_mb, "", fp32_benchmark)
+            
+            if "fp16" in model_results:
+                readme_content = self.generate_readme(model_name, model_results["fp16"], fp32_info_for_readme)
+            else:
+                readme_content = self.generate_simple_readme(model_name, original_repo, fp32_info_for_readme)
+
+            # Start background upload
+            upload_repo_name = self.get_upload_repo_name(model_name)
+            upload_future = self.background_upload_model(fp32_path, upload_repo_name, readme_content)
+            
+            # Wait for upload to complete (no timeout - some models are very large)
+            try:
+                fp32_repo = upload_future.result()  # No timeout
+                logger.info(f"✅ Successfully uploaded {model_name} to {fp32_repo}")
+                
+                # Clean up model files immediately after successful upload
+                logger.info(f"🧹 Cleaning up model files for {model_name}")
+                if Path(fp32_path).exists():
+                    shutil.rmtree(fp32_path, ignore_errors=True)
+                    logger.info(f"🗑️ Deleted FP32 model files: {fp32_path}")
+                    
+            except Exception as upload_error:
+                logger.error(f"❌ Upload failed for {model_name}: {upload_error}")
+                raise upload_error
+
+            fp32_info = ModelInfo(
+                name=model_name,
+                precision="fp32",
+                repo=fp32_repo,
+                size_mb=fp32_benchmark.model_size_mb,
+                readme_url=f"https://huggingface.co/{fp32_repo}/blob/main/README.md",
+                benchmarks=fp32_benchmark
+            )
+            model_results["fp32"] = fp32_info
+
+            logger.info(f"✅ Successfully processed {model_name}")
+
+            # Log performance summary (if we have both FP16 and FP32 benchmarks)
+            if "fp16" in model_results:
+                original_benchmark = model_results["fp16"].benchmarks
+                load_improvement = ((original_benchmark.load_time_ms - fp32_benchmark.load_time_ms) /
+                                  original_benchmark.load_time_ms * 100)
+                logger.info(f"📊 Performance Summary for {model_name}:")
+                logger.info(f"   Load Time: {original_benchmark.load_time_ms:.1f}ms → {fp32_benchmark.load_time_ms:.1f}ms ({load_improvement:+.1f}%)")
+                logger.info(f"   Model Size: {original_benchmark.model_size_mb:.1f}MB → {fp32_benchmark.model_size_mb:.1f}MB")
+                logger.info(f"   Accuracy: {original_benchmark.transcription_accuracy:.1f}% → {fp32_benchmark.transcription_accuracy:.1f}%")
+
+        except Exception as e:
+            logger.error(f"❌ Failed to process {model_name}: {e}")
+            return {}
+
+        finally:
+            # Final cleanup
+            import shutil
+            for path_pattern in [f"{model_name}-fp32", f"{model_name}-fp16"]:
+                full_path = self.work_dir / path_pattern
+                if full_path.exists():
+                    logger.warning(f"🧹 Final cleanup: removing {full_path}")
+                    shutil.rmtree(full_path, ignore_errors=True)
+
+        return model_results
+
     def run(self) -> None:
         """Main conversion and benchmarking pipeline"""
         logger.info("🚀 Starting model conversion and benchmarking pipeline")
@@ -691,9 +936,46 @@ inference: true
             logger.error(f"Test audio file not found: {self.test_audio_path}")
             sys.exit(1)
 
-        # Process all models
-        for model_name, original_repo in self.original_models.items():
-            model_results = self.process_model(model_name, original_repo)
+        # Convert to list for lookahead and background downloading
+        models_list = list(self.original_models.items())
+        
+        # Show progress summary
+        completed_models = [name for name, _ in models_list if self.is_model_complete(name)]
+        remaining_models = [name for name, _ in models_list if not self.is_model_complete(name)]
+        
+        logger.info(f"📊 Progress Summary:")
+        logger.info(f"   ✅ Already completed: {len(completed_models)} models {completed_models}")
+        logger.info(f"   🔄 To process: {len(remaining_models)} models {remaining_models}")
+        
+        if not remaining_models:
+            logger.info("🎉 All models already completed! Nothing to do.")
+            return
+            
+        next_download_future = None
+        
+        # Process all models with optimizations
+        for i, (model_name, original_repo) in enumerate(models_list):
+            # Skip if model is already complete
+            if self.is_model_complete(model_name):
+                logger.info(f"⏭️ Skipping {model_name} - already completed")
+                continue
+                
+            # Start background download for next model (if any)
+            if i + 1 < len(models_list) and next_download_future is None:
+                # Find next incomplete model for background download
+                for j in range(i + 1, len(models_list)):
+                    next_model_name, next_repo = models_list[j]
+                    if not self.is_model_complete(next_model_name):
+                        next_download_future = self.background_download_next_model(next_model_name, next_repo)
+                        break
+            
+            # Process current model with optimizations
+            logger.info(f"🔄 Processing {model_name} (skipped {len([m for m in self.model_registry.keys()])} completed models)")
+            model_results = self.process_model_optimized(model_name, original_repo, next_download_future)
+            next_download_future = None  # Reset for next iteration
+            
+            # Force memory cleanup after each model
+            self.force_memory_cleanup()
             if model_results:
                 # Calculate additional performance metrics
                 for precision, info in model_results.items():
@@ -759,8 +1041,21 @@ inference: true
         logger.info(f"📄 Final registry: {Path(__file__).parent.parent / 'model_registry.json'}")
         logger.info(f"📄 Final benchmarks: {Path(__file__).parent / 'benchmarks.json'}")
 
+        # Clean up executor threads
+        self.cleanup_executors()
+
         # Print summary
         self.print_summary()
+
+    def cleanup_executors(self):
+        """Clean up background executor threads"""
+        logger.info("🧹 Cleaning up background threads...")
+        try:
+            self.upload_executor.shutdown(wait=True, timeout=60)
+            self.download_executor.shutdown(wait=True, timeout=60)
+            logger.info("✅ Background threads cleaned up successfully")
+        except Exception as e:
+            logger.warning(f"⚠️ Executor cleanup warning: {e}")
 
     def print_summary(self):
         """Print performance summary for all models"""

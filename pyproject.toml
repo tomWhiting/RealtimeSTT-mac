@@ -25,7 +25,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
 ]
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.10,<3.13"
 dependencies = [
     "PyAudio==0.2.14",
     "faster-whisper==1.1.1",
@@ -42,8 +42,9 @@ dependencies = [
 
 [tool.uv.sources]
 ctranslate2 = [
-    { path = "./wheels/ctranslate2-4.6.0+accelerate-cp311-cp311-macosx_15_0_arm64.whl", marker = "python_version < '3.12'" },
-    { path = "./wheels/ctranslate2-4.6.0+accelerate-cp312-cp312-macosx_15_0_arm64.whl", marker = "python_version >= '3.12'" },
+    { path = "./wheels/ctranslate2-4.6.0-cp310-cp310-macosx_15_0_arm64.whl", marker = "python_version < '3.11'" },
+    { path = "./wheels/ctranslate2-4.6.0-cp311-cp311-macosx_15_0_universal2.whl", marker = "python_version >= '3.11' and python_version < '3.12'" },
+    { path = "./wheels/ctranslate2-4.6.0-cp312-cp312-macosx_15_0_arm64.whl", marker = "python_version >= '3.12'" },
 ]
 
 [project.urls]

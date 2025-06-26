@@ -59,9 +59,9 @@
     },
     "large-v1": {
       "include": true,
-      "source_repo": "openai/whisper-large-v1",
+      "source_repo": "openai/whisper-large",
       "priority": 9,
-      "notes": "Highest accuracy, v1",
+      "notes": "Highest accuracy, v1 (uses openai/whisper-large)",
       "conversion_files": ["tokenizer.json", "preprocessor_config.json"]
     },
     "large-v2": {
