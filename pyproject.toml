@@ -42,9 +42,9 @@ dependencies = [
 
 [tool.uv.sources]
 ctranslate2 = [
-    { path = "./wheels/ctranslate2-4.6.0-cp310-cp310-macosx_15_0_arm64.whl", marker = "python_version < '3.11'" },
-    { path = "./wheels/ctranslate2-4.6.0-cp311-cp311-macosx_15_0_universal2.whl", marker = "python_version >= '3.11' and python_version < '3.12'" },
-    { path = "./wheels/ctranslate2-4.6.0-cp312-cp312-macosx_15_0_arm64.whl", marker = "python_version >= '3.12'" },
+    { url = "https://github.com/tomWhiting/RealtimeSTT-mac/releases/download/v0.1.0/ctranslate2-4.6.0-cp310-cp310-macosx_15_0_arm64.whl", marker = "python_version < '3.11'" },
+    { url = "https://github.com/tomWhiting/RealtimeSTT-mac/releases/download/v0.1.0/ctranslate2-4.6.0-cp311-cp311-macosx_15_0_universal2.whl", marker = "python_version >= '3.11' and python_version < '3.12'" },
+    { url = "https://github.com/tomWhiting/RealtimeSTT-mac/releases/download/v0.1.0/ctranslate2-4.6.0-cp312-cp312-macosx_15_0_arm64.whl", marker = "python_version >= '3.12'" },
 ]
 
 [project.urls]
